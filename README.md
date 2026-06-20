@@ -1,6 +1,7 @@
 # WebSecScope (WSS)
 
 Python 기반 웹 서비스, Linux 서버, Docker 컨테이너 보안 진단 CLI
+반복되는 점검의 자동화를 위함
 
 ## 1. 프로젝트 소개
 
