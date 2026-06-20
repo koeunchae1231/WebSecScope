@@ -9,10 +9,17 @@ from websecscope.reporter.llm_report_generator import LLMReportRequest, generate
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
 
-AI_REPORT_NOTICE = "Findings were detected by the rule-based engine. The LLM only summarized and explained the results."
+AI_REPORT_NOTICE = (
+    "Findings were detected by the rule-based engine. "
+    "The LLM only summarized and explained the results."
+)
 
 
-def write_html_report(result: dict[str, Any], output_path: str | Path, language: str | None = None) -> Path:
+def write_html_report(
+    result: dict[str, Any],
+    output_path: str | Path,
+    language: str | None = None,
+) -> Path:
     output = ensure_parent(output_path)
     lang = normalize_language(language or result.get("language"))
     result["language"] = lang
@@ -24,14 +31,35 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
     top_risks_section = _top_risks_section(summary.get("top_risks", []))
     finding_sections = render_findings_sections(findings)
     web_section = _category_section(text("web_security", lang), findings, {"web"})
-    api_section = _category_section(text("api_auth_security", lang), findings, {"api", "auth", "jwt", "cors", "idor", "rate_limit"})
-    linux_section = _linux_section(result.get("linux_scan", {}), result.get("linux_findings", []))
-    docker_section = _docker_section(result.get("docker_scan", {}), result.get("docker_findings", []))
-    service_rows = "\n".join(_service_row(item) for item in result.get("version_detection", {}).get("items", []))
+    api_section = _category_section(
+        text("api_auth_security", lang),
+        findings,
+        {"api", "auth", "jwt", "cors", "idor", "rate_limit"},
+    )
+    linux_section = _linux_section(
+        result.get("linux_scan", {}),
+        result.get("linux_findings", []),
+    )
+    docker_section = _docker_section(
+        result.get("docker_scan", {}),
+        result.get("docker_findings", []),
+    )
+    service_rows = "\n".join(
+        _service_row(item)
+        for item in result.get("version_detection", {}).get("items", [])
+    )
     service_section = _service_section(service_rows, result.get("service_findings", []))
-    cve_rows = "\n".join(_cve_row(item) for item in result.get("cve_lookup", {}).get("items", []))
-    cve_section = _cve_section(cve_rows, result.get("cve_findings", []), result.get("cve_lookup", {}))
-    ai_report = generate_llm_report(LLMReportRequest(rule_based_result=result, language=lang))
+    cve_rows = "\n".join(
+        _cve_row(item) for item in result.get("cve_lookup", {}).get("items", [])
+    )
+    cve_section = _cve_section(
+        cve_rows,
+        result.get("cve_findings", []),
+        result.get("cve_lookup", {}),
+    )
+    ai_report = generate_llm_report(
+        LLMReportRequest(rule_based_result=result, language=lang)
+    )
     ai_section = render_ai_report_section(ai_report, lang)
     header_section = _render_header(result, lang)
     html = f"""<!doctype html>
@@ -291,7 +319,12 @@ def _count_by(findings: list[dict[str, Any]], key: str) -> dict[str, int]:
 
 
 def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
-    notice_text = AI_REPORT_NOTICE if language == "en" else f"{AI_REPORT_NOTICE} 탐지는 rule-based engine이 수행했으며, LLM은 결과를 요약하고 설명만 합니다."
+    notice_text = AI_REPORT_NOTICE
+    if language != "en":
+        notice_text = (
+            f"{AI_REPORT_NOTICE} 탐지는 rule-based engine이 수행했으며, "
+            "LLM은 결과를 요약하고 설명만 합니다."
+        )
     if ai_report.get("content"):
         body = _render_ai_text(str(ai_report.get("content", "")))
         status = f"Model: {escape(str(ai_report.get('model', '')))}"
@@ -302,7 +335,10 @@ def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
             if language == "en"
             else "AI 리포트를 생성할 수 없습니다. rule-based JSON/HTML 리포트는 정상 생성되었습니다."
         )
-        body = f"<p>{escape(fallback)}</p><p class=\"subtle\">{escape(str(error))}</p>"
+        body = (
+            f"<p>{escape(fallback)}</p>"
+            f'<p class="subtle">{escape(str(error))}</p>'
+        )
         status = f"Model: {escape(str(ai_report.get('model', '')))} | Fallback"
     return f"""
     <section class="section">

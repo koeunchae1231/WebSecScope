@@ -1,15 +1,22 @@
 from __future__ import annotations
 
 import json
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 from dataclasses import dataclass
 from typing import Any, Protocol
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
+from websecscope.config.settings import (
+    OLLAMA_MODEL,
+    OLLAMA_TEMPERATURE,
+    OLLAMA_TIMEOUT,
+    OLLAMA_URL,
+)
 
-DEFAULT_MODEL = "qwen2.5:7b"
-DEFAULT_OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
-REQUEST_TIMEOUT_SECONDS = 60
+DEFAULT_MODEL = OLLAMA_MODEL
+DEFAULT_OLLAMA_ENDPOINT = OLLAMA_URL
+REQUEST_TIMEOUT_SECONDS = OLLAMA_TIMEOUT
+DEFAULT_TEMPERATURE = OLLAMA_TEMPERATURE
 
 
 class LLMClient(Protocol):
@@ -26,9 +33,15 @@ class LLMReportRequest:
 
 
 class OllamaClient:
-    def __init__(self, endpoint: str = DEFAULT_OLLAMA_ENDPOINT, timeout_seconds: int = REQUEST_TIMEOUT_SECONDS) -> None:
+    def __init__(
+        self,
+        endpoint: str = DEFAULT_OLLAMA_ENDPOINT,
+        timeout_seconds: int = REQUEST_TIMEOUT_SECONDS,
+        temperature: float = DEFAULT_TEMPERATURE,
+    ) -> None:
         self.endpoint = endpoint
         self.timeout_seconds = timeout_seconds
+        self.temperature = temperature
 
     def generate(self, prompt: str, model: str = DEFAULT_MODEL) -> str:
         payload = json.dumps(
@@ -36,9 +49,7 @@ class OllamaClient:
                 "model": model,
                 "prompt": prompt,
                 "stream": False,
-                "options": {
-                    "temperature": 0.2,
-                },
+                "options": {"temperature": self.temperature},
             }
         ).encode("utf-8")
         request = Request(
@@ -58,7 +69,7 @@ class OllamaClient:
 
 
 def build_llm_prompt(request: LLMReportRequest) -> str:
-    """Build a prompt that forbids LLM-based detection and uses only scanner output."""
+    """Compatibility wrapper for callers that used the v2 prompt function."""
     return build_prompt(request)
 
 
@@ -71,21 +82,18 @@ def build_prompt(request: LLMReportRequest) -> str:
     return _english_prompt(payload)
 
 
-def generate_llm_report(request: LLMReportRequest, client: LLMClient | None = None) -> dict[str, Any]:
-    """Generate an optional narrative report when a client is supplied.
-
-    v2 intentionally does not make LLM output part of detection. Without a client,
-    this returns a prepared prompt so the normal rule-based JSON/HTML report path
-    continues to work unchanged.
-    """
+def generate_llm_report(
+    request: LLMReportRequest,
+    client: LLMClient | None = None,
+) -> dict[str, Any]:
+    """Generate optional narrative output without changing rule-based findings."""
     prompt = build_prompt(request)
-    if client is None:
-        client = OllamaClient(endpoint=request.endpoint)
+    llm_client = client or OllamaClient(endpoint=request.endpoint)
     try:
-        content = call_ollama(client, prompt, request.model)
+        content = call_ollama(llm_client, prompt, request.model)
     except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
-        return build_fallback_report(request, client, prompt, exc)
-    return build_success_report(request, client, prompt, content)
+        return build_fallback_report(request, llm_client, prompt, exc)
+    return build_success_report(request, llm_client, prompt, content)
 
 
 def call_ollama(client: LLMClient, prompt: str, model: str) -> str:

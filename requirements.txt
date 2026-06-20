@@ -1,1 +1,1 @@
-# WebSecScope v1.0 uses only the Python standard library.
+pytest>=8.0
