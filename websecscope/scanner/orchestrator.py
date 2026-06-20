@@ -18,6 +18,7 @@ from websecscope.scanner.web import scan_web_target
 
 def run_scan(
     target: str,
+    language: str = "ko",
     include_api_auth: bool = True,
     include_linux: bool = True,
     include_docker: bool = True,
@@ -61,6 +62,7 @@ def run_scan(
         target=target,
         findings=findings,
         score=score,
+        language=language,
         metadata={"scanners": scanners},
         api_scan=api_scan,
         auth_scan=auth_scan,

@@ -4,20 +4,24 @@ from html import escape
 from pathlib import Path
 from typing import Any
 
+from websecscope.i18n import normalize_language, severity_label, text
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
 
 
-def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
+def write_html_report(result: dict[str, Any], output_path: str | Path, language: str | None = None) -> Path:
     output = ensure_parent(output_path)
+    lang = normalize_language(language or result.get("language"))
+    result["language"] = lang
     findings = result.get("all_findings", result.get("findings", []))
     summary = result.get("findings_summary", {})
     rows = "\n".join(_finding_row(finding) for finding in findings)
     executive_section = _executive_section(result, summary)
     severity_section = _severity_section(summary)
     top_risks_section = _top_risks_section(summary.get("top_risks", []))
-    web_section = _category_section("Web Security", findings, {"web"})
-    api_section = _category_section("API/Auth Security", findings, {"api", "auth", "jwt", "cors", "idor", "rate_limit"})
+    finding_sections = _finding_sections(findings)
+    web_section = _category_section(text("web_security", lang), findings, {"web"})
+    api_section = _category_section(text("api_auth_security", lang), findings, {"api", "auth", "jwt", "cors", "idor", "rate_limit"})
     linux_section = _linux_section(result.get("linux_scan", {}), result.get("linux_findings", []))
     docker_section = _docker_section(result.get("docker_scan", {}), result.get("docker_findings", []))
     service_rows = "\n".join(_service_row(item) for item in result.get("version_detection", {}).get("items", []))
@@ -25,19 +29,27 @@ def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
     cve_rows = "\n".join(_cve_row(item) for item in result.get("cve_lookup", {}).get("items", []))
     cve_section = _cve_section(cve_rows, result.get("cve_findings", []), result.get("cve_lookup", {}))
     html = f"""<!doctype html>
-<html lang="en">
+<html lang="{escape(lang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WebSecScope Report</title>
+  <title>{escape(text("title", lang))}</title>
   <style>
-    body {{ font-family: Arial, sans-serif; margin: 0; color: #17202a; background: #f4f7fb; }}
-    header {{ background: #16213e; color: white; padding: 30px 38px; }}
-    main {{ padding: 28px 36px; }}
+    :root {{ --bg: #eef3f8; --ink: #17202a; --muted: #607089; --line: #d8dee9; --panel: #ffffff; --navy: #14213d; --teal: #0f766e; --red: #b91c1c; --orange: #b45309; --blue: #2563eb; --slate: #475569; }}
+    * {{ box-sizing: border-box; }}
+    body {{ font-family: Arial, sans-serif; margin: 0; color: var(--ink); background: var(--bg); }}
+    header {{ background: linear-gradient(135deg, #14213d 0%, #0f766e 100%); color: white; padding: 30px 38px; }}
+    main {{ padding: 28px 36px; max-width: 1320px; margin: 0 auto; }}
+    h1, h2, h3 {{ letter-spacing: 0; }}
     h2 {{ margin-top: 0; }}
+    h3 {{ margin: 18px 0 8px; }}
     table {{ border-collapse: collapse; width: 100%; background: white; margin-top: 10px; }}
-    th, td {{ border-bottom: 1px solid #d8dee9; padding: 10px; text-align: left; vertical-align: top; font-size: 14px; }}
+    th, td {{ border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; font-size: 14px; }}
     th {{ background: #edf2f7; color: #243447; }}
+    .hero {{ display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }}
+    .score-wrap {{ display: grid; grid-template-columns: 132px minmax(140px, 1fr); gap: 18px; align-items: center; }}
+    .gauge {{ width: 132px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(#22c55e calc(var(--score) * 1%), rgba(255,255,255,.22) 0); }}
+    .gauge-inner {{ width: 94px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: #ffffff; color: #14213d; font-size: 30px; font-weight: 800; }}
     .score {{ display: inline-block; min-width: 76px; padding: 10px 14px; border-radius: 6px; font-size: 26px; font-weight: bold; }}
     .score.good {{ background: #d1fae5; color: #065f46; }}
     .score.warn {{ background: #fef3c7; color: #92400e; }}
@@ -47,11 +59,18 @@ def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
     .fail {{ background: #fee2e2; color: #991b1b; }}
     .warning {{ background: #fef3c7; color: #92400e; }}
     .meta {{ color: #dbeafe; margin-top: 8px; }}
-    .section {{ margin-bottom: 28px; background: white; border: 1px solid #d8dee9; border-radius: 8px; padding: 18px; }}
+    .section {{ margin-bottom: 24px; background: white; border: 1px solid var(--line); border-radius: 8px; padding: 18px; box-shadow: 0 10px 24px rgba(20,33,61,.06); }}
     .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }}
-    .card {{ background: #f8fafc; border: 1px solid #d8dee9; border-radius: 8px; padding: 14px; }}
+    .card {{ background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; padding: 14px; }}
     .card strong {{ display: block; font-size: 22px; margin-top: 6px; }}
-    .muted {{ color: #607089; }}
+    .severity-card {{ border-left: 6px solid var(--slate); }}
+    .severity-card.critical {{ border-left-color: #7f1d1d; background: #fff1f2; }}
+    .severity-card.high {{ border-left-color: #b91c1c; background: #fef2f2; }}
+    .severity-card.medium {{ border-left-color: #b45309; background: #fff7ed; }}
+    .severity-card.low {{ border-left-color: #2563eb; background: #eff6ff; }}
+    .severity-card.informational {{ border-left-color: #475569; background: #f8fafc; }}
+    .muted {{ color: var(--muted); }}
+    .subtle {{ font-size: 12px; color: var(--muted); }}
     .risk-critical {{ color: #7f1d1d; font-weight: bold; }}
     .risk-high {{ color: #991b1b; font-weight: bold; }}
     .risk-medium {{ color: #92400e; font-weight: bold; }}
@@ -61,18 +80,26 @@ def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
 </head>
 <body>
   <header>
-    <h1>WebSecScope Report</h1>
-    <div class="score {score_class(result.get("score", 0))}">{escape(str(result.get("score", "N/A")))}</div>
-    <div class="meta">Target: {escape(str(result.get("target", "")))} | Generated: {escape(str(result.get("generated_at", "")))}</div>
+    <div class="hero">
+      <div>
+        <h1>{escape(text("title", lang))}</h1>
+        <div class="meta">{escape(text("target", lang))}: {escape(str(result.get("target", "")))} | {escape(text("generated", lang))}: {escape(str(result.get("generated_at", "")))} | {escape(text("language", lang))}: {escape(lang)}</div>
+      </div>
+      <div class="score-wrap">
+        <div class="gauge" style="--score: {escape(str(result.get("score", 0)))}"><div class="gauge-inner">{escape(str(result.get("score", "N/A")))}</div></div>
+        <div><div class="score {score_class(result.get("score", 0))}">{escape(str(result.get("grade", "N/A")))}</div><div class="meta">{escape(text("before_after_ready", lang))}</div></div>
+      </div>
+    </div>
   </header>
   <main>
     {executive_section}
     {severity_section}
     {top_risks_section}
+    {finding_sections}
     {web_section}
     {api_section}
     <section class="section">
-      <h2>Service &amp; Version Detection</h2>
+      <h2>{escape(text("service_version", lang))}</h2>
       {service_section}
     </section>
     {cve_section}
@@ -80,14 +107,16 @@ def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
     {docker_section}
     {_recheck_section(result)}
     <section class="section">
-    <h2>All Findings</h2>
+    <h2>{escape(text("all_findings", lang))}</h2>
     <table>
       <thead>
         <tr>
           <th>Status</th>
-          <th>Risk</th>
+          <th>Severity</th>
           <th>Category</th>
+          <th>OWASP</th>
           <th>Finding</th>
+          <th>Interpretation</th>
           <th>Evidence</th>
           <th>Recommendation</th>
         </tr>
@@ -106,12 +135,15 @@ def write_html_report(result: dict[str, Any], output_path: str | Path) -> Path:
 def _finding_row(finding: dict[str, Any]) -> str:
     status = escape(str(finding.get("status", "WARNING")))
     severity = str(finding.get("severity", finding.get("risk", "")))
+    language = finding.get("language")
     return f"""
         <tr>
           <td><span class="badge {status_class(status)}">{status}</span></td>
-          <td><span class="risk-{escape(severity)}">{escape(severity)}</span></td>
+          <td><span class="risk-{escape(severity)}">{escape(str(finding.get("severity_label") or severity_label(severity, language)))}</span></td>
           <td>{escape(str(finding.get("category", "")))}</td>
+          <td>{escape(str(finding.get("owasp_category", "")))}</td>
           <td>{escape(str(finding.get("title", "")))}</td>
+          <td>{escape(_shorten(str(finding.get("interpretation", finding.get("description", ""))), 180))}</td>
           <td>{escape(str(finding.get("evidence", "")))}</td>
           <td>{escape(_shorten(str(finding.get("recommendation", "")), 180))}</td>
         </tr>"""
@@ -120,16 +152,17 @@ def _finding_row(finding: dict[str, Any]) -> str:
 def _executive_section(result: dict[str, Any], summary: dict[str, Any]) -> str:
     score = result.get("score", "N/A")
     grade = result.get("grade", "N/A")
+    lang = result.get("language")
     return f"""
     <section class="section">
-      <h2>Executive Summary</h2>
+      <h2>{escape(text("executive_summary", lang))}</h2>
       <div class="grid">
-        <div class="card">Security Score<strong>{escape(str(score))}</strong></div>
-        <div class="card">Grade<strong>{escape(str(grade))}</strong></div>
-        <div class="card">Findings<strong>{escape(str(summary.get("total", 0)))}</strong></div>
-        <div class="card">Effective Findings<strong>{escape(str(summary.get("effective_total", 0)))}</strong></div>
+        <div class="card">{escape(text("security_score", lang))}<strong>{escape(str(score))}</strong></div>
+        <div class="card">{escape(text("grade", lang))}<strong>{escape(str(grade))}</strong></div>
+        <div class="card">{escape(text("findings", lang))}<strong>{escape(str(summary.get("total", 0)))}</strong></div>
+        <div class="card">{escape(text("effective_findings", lang))}<strong>{escape(str(summary.get("effective_total", 0)))}</strong></div>
       </div>
-      <p class="muted">Target: {escape(str(result.get("target", "")))} | Generated: {escape(str(result.get("generated_at", "")))}</p>
+      <p class="muted">{escape(text("target", lang))}: {escape(str(result.get("target", "")))} | {escape(text("generated", lang))}: {escape(str(result.get("generated_at", "")))}</p>
     </section>"""
 
 
@@ -138,11 +171,11 @@ def _severity_section(summary: dict[str, Any]) -> str:
     <section class="section">
       <h2>Findings Summary by Severity</h2>
       <div class="grid">
-        <div class="card">Critical<strong class="risk-critical">{escape(str(summary.get("critical", 0)))}</strong></div>
-        <div class="card">High<strong class="risk-high">{escape(str(summary.get("high", 0)))}</strong></div>
-        <div class="card">Medium<strong class="risk-medium">{escape(str(summary.get("medium", 0)))}</strong></div>
-        <div class="card">Low<strong class="risk-low">{escape(str(summary.get("low", 0)))}</strong></div>
-        <div class="card">Informational<strong class="risk-informational">{escape(str(summary.get("informational", 0)))}</strong></div>
+        <div class="card severity-card critical">Critical<strong class="risk-critical">{escape(str(summary.get("critical", 0)))}</strong></div>
+        <div class="card severity-card high">High<strong class="risk-high">{escape(str(summary.get("high", 0)))}</strong></div>
+        <div class="card severity-card medium">Medium<strong class="risk-medium">{escape(str(summary.get("medium", 0)))}</strong></div>
+        <div class="card severity-card low">Low<strong class="risk-low">{escape(str(summary.get("low", 0)))}</strong></div>
+        <div class="card severity-card informational">Informational<strong class="risk-informational">{escape(str(summary.get("informational", 0)))}</strong></div>
       </div>
     </section>"""
 
@@ -157,8 +190,9 @@ def _top_risks_section(top_risks: list[dict[str, Any]]) -> str:
         rows = "\n".join(
             f"""
         <tr>
-          <td><span class="risk-{escape(str(risk.get('severity', 'informational')))}">{escape(str(risk.get('severity', 'informational')))}</span></td>
+          <td><span class="risk-{escape(str(risk.get('severity', 'informational')))}">{escape(str(risk.get('severity_label', risk.get('severity', 'informational'))))}</span></td>
           <td>{escape(str(risk.get('category', '')))}</td>
+          <td>{escape(str(risk.get('owasp_category', '')))}</td>
           <td>{escape(str(risk.get('title', '')))}</td>
           <td>{escape(_shorten(str(risk.get('evidence', '')), 180))}</td>
         </tr>"""
@@ -168,7 +202,7 @@ def _top_risks_section(top_risks: list[dict[str, Any]]) -> str:
     <section class="section">
       <h2>Top Risks</h2>
       <table>
-        <thead><tr><th>Severity</th><th>Category</th><th>Finding</th><th>Evidence</th></tr></thead>
+        <thead><tr><th>Severity</th><th>Category</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
         <tbody>{rows}</tbody>
       </table>
     </section>"""
@@ -179,14 +213,15 @@ def _category_section(title: str, findings: list[dict[str, Any]], categories: se
     if not scoped:
         rows = """
         <tr>
-          <td colspan="4">No findings available for this section.</td>
+          <td colspan="5">No findings available for this section.</td>
         </tr>"""
     else:
         rows = "\n".join(
             f"""
         <tr>
           <td><span class="badge {status_class(str(finding.get('status', 'WARNING')))}">{escape(str(finding.get('status', 'WARNING')))}</span></td>
-          <td><span class="risk-{escape(str(finding.get('severity', 'informational')))}">{escape(str(finding.get('severity', 'informational')))}</span></td>
+          <td><span class="risk-{escape(str(finding.get('severity', 'informational')))}">{escape(str(finding.get('severity_label', finding.get('severity', 'informational'))))}</span></td>
+          <td>{escape(str(finding.get('owasp_category', '')))}</td>
           <td>{escape(str(finding.get('title', '')))}</td>
           <td>{escape(_shorten(str(finding.get('evidence', '')), 220))}</td>
         </tr>"""
@@ -196,10 +231,42 @@ def _category_section(title: str, findings: list[dict[str, Any]], categories: se
     <section class="section">
       <h2>{escape(title)}</h2>
       <table>
-        <thead><tr><th>Status</th><th>Severity</th><th>Finding</th><th>Evidence</th></tr></thead>
+        <thead><tr><th>Status</th><th>Severity</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
         <tbody>{rows}</tbody>
       </table>
     </section>"""
+
+
+def _finding_sections(findings: list[dict[str, Any]]) -> str:
+    if not findings:
+        return ""
+    by_category = _count_by(findings, "category")
+    by_owasp = _count_by(findings, "owasp_category")
+    category_cards = "".join(
+        f'<div class="card">{escape(str(name))}<strong>{escape(str(count))}</strong></div>'
+        for name, count in sorted(by_category.items())
+    )
+    owasp_rows = "".join(
+        f"<tr><td>{escape(str(name))}</td><td>{escape(str(count))}</td></tr>"
+        for name, count in sorted(by_owasp.items())
+    )
+    return f"""
+    <section class="section">
+      <h2>Findings by Category and OWASP</h2>
+      <div class="grid">{category_cards}</div>
+      <table>
+        <thead><tr><th>OWASP Top 10 Category</th><th>Findings</th></tr></thead>
+        <tbody>{owasp_rows}</tbody>
+      </table>
+    </section>"""
+
+
+def _count_by(findings: list[dict[str, Any]], key: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for finding in findings:
+        value = str(finding.get(key) or "Unmapped")
+        counts[value] = counts.get(value, 0) + 1
+    return counts
 
 
 def _linux_section(linux_scan: dict[str, Any], linux_findings: list[dict[str, Any]]) -> str:

@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from websecscope.analyzer.recheck import compare_results
+from websecscope.i18n import DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, normalize_language
 from websecscope.reporter import write_html_report, write_json_report
 from websecscope.scanner import run_scan
 from websecscope.utils import load_json, save_json
@@ -18,6 +19,7 @@ def main() -> None:
     scan_parser = subparsers.add_parser("scan", help="Run safe security checks and save JSON results")
     scan_parser.add_argument("--target", required=True, help="Authorized target URL, e.g. https://example.com")
     scan_parser.add_argument("--output", default=None, help="Output JSON path")
+    scan_parser.add_argument("--lang", choices=sorted(SUPPORTED_LANGUAGES), default=DEFAULT_LANGUAGE, help="Report language: ko or en")
     api_auth_group = scan_parser.add_mutually_exclusive_group()
     api_auth_group.add_argument("--api-auth", action="store_true", help="Include API/Auth analysis; enabled by default")
     api_auth_group.add_argument("--skip-api-auth", action="store_true", help="Skip API/Auth analysis")
@@ -37,6 +39,7 @@ def main() -> None:
     report_parser = subparsers.add_parser("report", help="Generate an HTML report from a JSON result")
     report_parser.add_argument("--input", required=True, help="Input JSON result path")
     report_parser.add_argument("--output", default=None, help="Output HTML path")
+    report_parser.add_argument("--lang", choices=sorted(SUPPORTED_LANGUAGES), default=None, help="Override report language")
 
     recheck_parser = subparsers.add_parser("recheck", help="Compare two JSON scan results")
     recheck_parser.add_argument("--before", required=True, help="Previous JSON result path")
@@ -49,6 +52,7 @@ def main() -> None:
             _scan(
                 args.target,
                 args.output,
+                language=args.lang,
                 include_api_auth=not args.skip_api_auth,
                 include_linux=not args.skip_linux,
                 include_docker=not args.skip_docker,
@@ -56,7 +60,7 @@ def main() -> None:
                 include_cve=not args.skip_cve,
             )
         elif args.command == "report":
-            _report(args.input, args.output)
+            _report(args.input, args.output, args.lang)
         elif args.command == "recheck":
             _recheck(args.before, args.after, args.output)
     except KeyboardInterrupt:
@@ -66,6 +70,7 @@ def main() -> None:
 def _scan(
     target: str,
     output: str | None,
+    language: str = DEFAULT_LANGUAGE,
     include_api_auth: bool = True,
     include_linux: bool = True,
     include_docker: bool = True,
@@ -74,6 +79,7 @@ def _scan(
 ) -> None:
     result = run_scan(
         target,
+        language=normalize_language(language),
         include_api_auth=include_api_auth,
         include_linux=include_linux,
         include_docker=include_docker,
@@ -81,18 +87,18 @@ def _scan(
         include_cve=include_cve,
     )
     output_path = output or f"reports/result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    path = write_json_report(result, output_path)
+    path = write_json_report(result, output_path, language=language)
     print(f"JSON report written: {path}")
     print(f"Security Score: {result.score}")
 
 
-def _report(input_path: str, output: str | None) -> None:
+def _report(input_path: str, output: str | None, language: str | None = None) -> None:
     result = _safe_load_json(input_path)
     if result is None:
         return
     output_path = output or str(Path(input_path).with_suffix(".html"))
     try:
-        path = write_html_report(result, output_path)
+        path = write_html_report(result, output_path, language=language)
     except OSError as exc:
         print(f"HTML report failed: {type(exc).__name__}: unable to write {output_path}")
         return

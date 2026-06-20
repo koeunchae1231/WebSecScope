@@ -6,6 +6,8 @@ from typing import Any
 from uuid import uuid4
 
 from websecscope.guide.mappings import recommendation_for_finding
+from websecscope.i18n import DEFAULT_LANGUAGE, localize_finding, normalize_language
+from websecscope.owasp import owasp_category_for
 
 
 PASS = "PASS"
@@ -30,13 +32,17 @@ class Finding:
     recommendation: str
     metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self, language: str | None = None) -> dict[str, Any]:
         payload = asdict(self)
         if not payload.get("recommendation"):
             payload["recommendation"] = recommendation_for_finding(self.check_id, self.category)
         payload["id"] = self.check_id
         payload["severity"] = _severity_label(self.risk)
         payload["description"] = self.metadata.get("description", self.title)
+        payload["interpretation"] = self.metadata.get("interpretation", payload["description"])
+        payload["owasp_category"] = self.metadata.get("owasp_category") or owasp_category_for(self.check_id, self.category)
+        payload["language"] = normalize_language(language)
+        localize_finding(payload, language)
         return payload
 
 
@@ -47,7 +53,8 @@ class ScanResult:
     score: int
     generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     scan_id: str = field(default_factory=lambda: str(uuid4()))
-    version: str = "1.0.0"
+    version: str = "2.0.0"
+    language: str = DEFAULT_LANGUAGE
     metadata: dict[str, Any] = field(default_factory=dict)
     api_scan: dict[str, Any] = field(default_factory=dict)
     auth_scan: dict[str, Any] = field(default_factory=dict)
@@ -57,8 +64,9 @@ class ScanResult:
     version_detection: dict[str, Any] = field(default_factory=dict)
     cve_lookup: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> dict[str, Any]:
-        findings = [finding.to_dict() for finding in self.findings]
+    def to_dict(self, language: str | None = None) -> dict[str, Any]:
+        lang = normalize_language(language or self.language)
+        findings = [finding.to_dict(lang) for finding in self.findings]
         findings_summary = summarize_findings(findings)
         api_auth_findings = [
             finding
@@ -72,6 +80,7 @@ class ScanResult:
         return {
             "scan_id": self.scan_id,
             "version": self.version,
+            "language": lang,
             "generated_at": self.generated_at,
             "target": self.target,
             "score": self.score,
@@ -100,12 +109,15 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
     by_status = {PASS: 0, FAIL: 0, WARNING: 0}
     severity_counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "informational": 0}
     categories: dict[str, int] = {}
+    owasp_categories: dict[str, int] = {}
     effective_seen: set[tuple[str, str]] = set()
     top_risks = []
     for finding in findings:
         by_status[finding.get("status", WARNING)] = by_status.get(finding.get("status", WARNING), 0) + 1
         category = finding.get("category", "unknown")
         categories[category] = categories.get(category, 0) + 1
+        owasp_category = finding.get("owasp_category", "Unmapped")
+        owasp_categories[owasp_category] = owasp_categories.get(owasp_category, 0) + 1
         if _is_skipped_dict(finding):
             continue
         dedupe_key = (category, str(finding.get("title", finding.get("id", ""))).lower())
@@ -121,6 +133,8 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
                     "title": finding.get("title"),
                     "category": category,
                     "severity": severity,
+                    "severity_label": finding.get("severity_label", severity),
+                    "owasp_category": finding.get("owasp_category", "Unmapped"),
                     "evidence": finding.get("evidence", ""),
                 }
             )
@@ -133,6 +147,7 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
         "low": severity_counts["low"],
         "informational": severity_counts["informational"],
         "categories": categories,
+        "owasp_categories": owasp_categories,
         "top_risks": top_risks[:10],
         "by_status": by_status,
         "by_risk": {
