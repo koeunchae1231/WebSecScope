@@ -1,38 +1,70 @@
 # WebSecScope (WSS)
 
-WebSecScope is a defensive, rule-based security diagnostic CLI for web applications, Linux hosts, Docker environments, service/version inventory, CVE/CVSS review, and report generation.
+WebSecScope는 Web Application, Linux host, Docker 환경, service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한 방어적 rule-based 보안 진단 CLI.
 
-Important v2.1 note: the Ollama/Qwen2.5 AI Report is optional. The LLM does not detect vulnerabilities. Findings are produced only by the rule-based scanner/analyzer pipeline, and the LLM only summarizes and explains those results.
+v2.1 이후의 Ollama/Qwen2.5 AI Report는 선택 기능. LLM은 취약점 탐지를 수행하지 않으며, finding은 scanner/analyzer 기반 rule-based pipeline에서만 생성. LLM은 이미 생성된 rule-based JSON을 요약하고 설명하는 역할.
+
+영문 문서는 [README_EN.md](README_EN.md)에 별도 제공.
+
+## 프로젝트 소개
+
+WebSecScope의 목표는 반복적인 보안 점검 결과를 일관된 JSON/HTML report로 남기는 것.
+
+주요 설계 방향:
+
+- 공격 도구가 아닌 방어적 진단 도구
+- exploit 실행 없는 read-only 중심 점검
+- scanner와 analyzer가 만든 evidence 기반 finding
+- score, OWASP, recommendation, recheck 결과를 포함한 report 중심 구조
+- LLM이 탐지하지 않고 결과 설명만 담당하는 선택형 AI Report 구조
+
+## 주요 기능
+
+- Web Security Header scan
+- Cookie security attribute 확인
+- Sensitive path HTTP status 해석
+- API/Auth heuristic analysis
+- JWT/CORS/IDOR/rate-limit signal review
+- Linux read-only security check
+- Docker read-only security check
+- Service/version detection
+- NVD CVE/CVSS lookup
+- Security Score 및 grade 계산
+- OWASP Top 10 category 매핑
+- Korean/English report 지원
+- JSON/HTML report 생성
+- Before/After recheck 비교
+- Optional Ollama AI Report
 
 ## Quick Start
 
-Install dependencies:
+의존성 설치:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run a scan and create a report:
+scan 실행 및 report 생성:
 
 ```bash
 python main.py scan --target https://example.com --output reports/result.json
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-English report:
+English report 생성:
 
 ```bash
 python main.py scan --target https://example.com --lang en --output reports/result_en.json
 python main.py report --input reports/result_en.json --lang en --output reports/result_en.html
 ```
 
-Recheck comparison:
+recheck 비교:
 
 ```bash
 python main.py recheck --before reports/before.json --after reports/result.json --output reports/recheck.json
 ```
 
-Optional AI Report with Ollama:
+Ollama 기반 Optional AI Report:
 
 ```bash
 ollama pull qwen2.5:7b
@@ -40,54 +72,23 @@ ollama serve
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-## Implementation Status
+## 설치
 
-### v1.0
+권장 환경:
 
-- Rule-based web security checks.
-- API/auth heuristic analysis.
-- Linux and Docker read-only checks.
-- Service/version detection.
-- NVD CVE/CVSS lookup.
-- Security score and grade.
-- JSON and HTML report generation.
-- Recheck comparison.
+- Python 3.10 이상
+- Docker check 사용 시 Docker CLI 접근 권한
+- Linux check 사용 시 Linux runtime
+- CVE lookup 품질 향상을 위한 선택적 `NVD_API_KEY`
+- AI Report 사용 시 Ollama 및 `qwen2.5:7b`
 
-### v2.0
+설치:
 
-- Korean/English report language support with `--lang ko` and `--lang en`.
-- `language` included in JSON and HTML reports.
-- Localized severity labels and report text structure.
-- OWASP Top 10 classification with `owasp_category` on findings.
-- Improved sensitive-path HTTP status interpretation:
-  - `200`: exposed
-  - `401` / `403`: protected but exists
-  - `404`: not found
-  - `301` / `302`: redirected, with `Location` recorded
-  - `500`: server error risk
-- Evidence and interpretation separated in finding output.
-- Improved HTML report UI with score gauge, severity cards, executive summary cards, and category/OWASP sections.
+```bash
+pip install -r requirements.txt
+```
 
-### v2.1
-
-- Optional Ollama AI Report integration.
-- Model: `qwen2.5:7b`.
-- Endpoint: `http://localhost:11434/api/generate`.
-- AI output sections:
-  - `Executive Summary`
-  - `Risk Analysis`
-  - `Priority Recommendations`
-- Graceful fallback when Ollama is unavailable or fails.
-- The LLM receives only rule-based scan JSON and never modifies `all_findings`.
-
-### v2.2
-
-- Ollama settings moved into `websecscope/config/settings.py`.
-- Ollama endpoint, model, timeout, and temperature can be overridden with environment variables.
-- Pytest coverage added for HTTP status handling, scoring, OWASP mapping, i18n, and LLM report fallback.
-- Documentation and code structure guide improved for maintainability.
-
-## CLI Options
+## 실행
 
 ### `scan`
 
@@ -95,16 +96,16 @@ python main.py report --input reports/result.json --output reports/result.html
 python main.py scan --target https://example.com --lang ko --output reports/result.json
 ```
 
-Common options:
+주요 option:
 
-- `--target`: authorized target URL.
-- `--output`: JSON output path.
-- `--lang {ko,en}`: report language, default `ko`.
-- `--skip-api-auth`: skip API/auth analysis.
-- `--skip-linux`: skip Linux checks.
-- `--skip-docker`: skip Docker checks.
-- `--skip-service-detect`: skip service/version detection.
-- `--skip-cve`: skip NVD CVE/CVSS lookup.
+- `--target`: 승인된 target URL
+- `--output`: JSON output path
+- `--lang {ko,en}`: report language, 기본값 `ko`
+- `--skip-api-auth`: API/Auth analysis 제외
+- `--skip-linux`: Linux check 제외
+- `--skip-docker`: Docker check 제외
+- `--skip-service-detect`: service/version detection 제외
+- `--skip-cve`: NVD CVE/CVSS lookup 제외
 
 ### `report`
 
@@ -112,11 +113,11 @@ Common options:
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-Common options:
+주요 option:
 
-- `--input`: input JSON result path.
-- `--output`: HTML output path.
-- `--lang {ko,en}`: override report language.
+- `--input`: input JSON result path
+- `--output`: HTML output path
+- `--lang {ko,en}`: report language override
 
 ### `recheck`
 
@@ -124,76 +125,129 @@ Common options:
 python main.py recheck --before reports/before.json --after reports/result.json
 ```
 
-## Report Outputs
+## Report Output
 
-JSON reports include:
+JSON report 주요 field:
 
 - `language`
-- `score` and `grade`
+- `score`
+- `grade`
 - `findings_summary`
-- `findings` and `all_findings`
-- localized `title`, `description`, `recommendation`, and `severity_label`
+- `findings`
+- `all_findings`
+- `title`
+- `description`
+- `recommendation`
+- `severity_label`
 - `owasp_category`
 - `evidence`
 - `interpretation`
 
-HTML reports include:
+HTML report 주요 section:
 
-- Security Score gauge.
-- Executive Summary.
-- Severity cards.
-- Top Risks.
-- Category and OWASP sections.
-- Web, API/Auth, Service, CVE, Linux, and Docker sections.
-- All Findings table.
-- Optional AI Report section.
+- Security Score gauge
+- Executive Summary
+- Severity cards
+- Top Risks
+- Category and OWASP sections
+- Web / API/Auth / Service / CVE / Linux / Docker sections
+- All Findings table
+- Optional AI Report section
 
 ## Sample Reports
 
-Sample reports generated during verification:
+검증 과정에서 생성한 sample report:
 
 - [Korean AI sample](reports/sample_v2_ko_ai.html)
 - [English AI sample](reports/sample_v2_en_ai.html)
 
-The matching sample JSON files are:
+matching sample JSON:
 
 - `reports/sample_v2_ko.json`
 - `reports/sample_v2_en.json`
 
+## 구현 상태
+
+### v1.0
+
+- Rule-based web security check
+- API/Auth heuristic analysis
+- Linux 및 Docker read-only check
+- Service/version detection
+- NVD CVE/CVSS lookup
+- Security Score 및 grade
+- JSON/HTML report generation
+- Recheck comparison
+
+### v2.0
+
+- `--lang ko`, `--lang en` 기반 Korean/English report 지원
+- JSON/HTML report의 `language` field
+- localized severity label 및 report text 구조
+- finding별 `owasp_category` 추가
+- Sensitive path HTTP status 해석 개선
+  - `200`: exposed
+  - `401` / `403`: protected but exists
+  - `404`: not found
+  - `301` / `302`: redirected, `Location` 기록
+  - `500`: server error risk
+- `evidence`와 `interpretation` 분리
+- Security Score gauge, severity cards, Executive Summary cards, category/OWASP sections 기반 HTML UI 개선
+
+### v2.1
+
+- Optional Ollama AI Report integration
+- model: `qwen2.5:7b`
+- endpoint: `http://localhost:11434/api/generate`
+- AI output section:
+  - `Executive Summary`
+  - `Risk Analysis`
+  - `Priority Recommendations`
+- Ollama unavailable/failure 시 graceful fallback
+- LLM 입력은 rule-based scan JSON만 사용
+- LLM이 `all_findings`를 수정하지 않는 구조
+
+### v2.2
+
+- Ollama 설정값의 `websecscope/config/settings.py` 분리
+- Ollama endpoint, model, timeout, temperature 환경변수 override 지원
+- HTTP status, score, OWASP, i18n, LLM fallback 대상 pytest 추가
+- 유지보수성을 위한 README, docs, CodeStructure 정리
+
 ## Ollama AI Report
 
-Install and run Ollama locally:
+Ollama 설치 및 실행:
 
 ```bash
 ollama pull qwen2.5:7b
 ollama serve
 ```
 
-Then generate the normal rule-based JSON and HTML report:
+일반 rule-based JSON 생성 후 HTML report 생성:
 
 ```bash
 python main.py scan --target https://example.com --lang ko --output reports/result.json
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-The AI Report is appended to the end of the HTML report. It includes this notice:
+HTML report 마지막에 `AI Report` section 추가. 해당 section에는 다음 안내문 포함:
 
 ```text
 Findings were detected by the rule-based engine. The LLM only summarized and explained the results.
 ```
 
-If Ollama is not running, the report still succeeds. The AI section shows a fallback message, and the rule-based JSON/HTML report remains usable.
+Ollama가 실행 중이 아니거나 요청이 실패해도 JSON/HTML report 생성은 정상 진행. AI section에는 fallback message 표시.
 
-### AI Report Configuration
+### AI Report 설정
 
-Default settings:
+기본값:
 
 - `OLLAMA_URL`: `http://localhost:11434/api/generate`
 - `OLLAMA_MODEL`: `qwen2.5:7b`
 - `OLLAMA_TIMEOUT`: `60`
 - `OLLAMA_TEMPERATURE`: `0.2`
 
-Override with environment variables:
+환경변수 override:
 
 Windows PowerShell:
 
@@ -211,54 +265,76 @@ export WEBSECSCOPE_OLLAMA_TIMEOUT=90
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-Supported override variables:
+지원 환경변수:
 
 - `WEBSECSCOPE_OLLAMA_URL`
 - `WEBSECSCOPE_OLLAMA_MODEL`
 - `WEBSECSCOPE_OLLAMA_TIMEOUT`
 - `WEBSECSCOPE_OLLAMA_TEMPERATURE`
 
-## Testing
+## 프로젝트 구조
 
-Run the test suite:
+```text
+main.py
+  -> websecscope/cli.py
+    -> websecscope/scanner/
+    -> websecscope/analyzer/
+    -> websecscope/models.py
+    -> websecscope/reporter/
+      -> json_reporter.py
+      -> html_reporter.py
+      -> llm_report_generator.py
+    -> websecscope/i18n.py
+    -> websecscope/owasp.py
+    -> websecscope/config/settings.py
+```
+
+학습용 상세 구조 문서:
+
+- [docs/architecture/CodeStructure.md](docs/architecture/CodeStructure.md)
+
+## 테스트
+
+pytest 실행:
 
 ```bash
 pytest
 ```
 
-The tests do not require external network access or a running Ollama process.
+테스트 특징:
 
-## Release Tags
+- 외부 network 의존 없음
+- 실제 Ollama process 의존 없음
+- LLM success/fallback은 monkeypatch 기반 검증
+- HTTP status interpretation, score, OWASP, i18n, LLM report generator 대상 테스트
 
-Recommended GitHub release tags:
+## Roadmap
 
-- `v1.0.0`: first rule-based MVP.
-- `v2.0.0`: bilingual reports, OWASP classification, improved HTML report, HTTP status interpretation.
-- `v2.1.0`: optional Ollama/Qwen2.5 AI Report.
-- `v2.2.0`: settings separation, tests, docs, and release readiness cleanup.
+완료:
+
+- `v1.0.0`: rule-based MVP
+- `v2.0.0`: bilingual report, OWASP classification, HTTP status interpretation, HTML UI 개선
+- `v2.1.0`: optional Ollama/Qwen2.5 AI Report
+- `v2.2.0`: settings separation, tests, docs, release readiness cleanup
+
+향후 확장 후보:
+
+- configurable LLM provider
+- standalone AI narrative artifact
+- localized finding text coverage 확대
+- before/after comparison visualization 강화
+- CPE 기반 CVE matching 정확도 개선
 
 ## Safety
 
-WebSecScope is designed for authorized defensive review.
+WebSecScope의 안전 원칙:
 
-- No brute force.
-- No denial-of-service testing.
-- No exploit execution.
-- No destructive filesystem or container actions.
-- Docker and Linux checks are read-only.
-- CVE matches are advisory and should be manually verified.
-
-## Code Structure
-
-See [docs/architecture/CodeStructure.md](docs/architecture/CodeStructure.md) for a beginner-friendly explanation of the code flow.
-
-## Requirements
-
-- Python 3.10 or newer recommended.
-- Optional: Docker CLI access for Docker checks.
-- Optional: Linux runtime for Linux checks.
-- Optional: `NVD_API_KEY` for better NVD API rate limits.
-- Optional: Ollama with `qwen2.5:7b` for AI Report generation.
+- brute force 없음
+- denial-of-service testing 없음
+- exploit execution 없음
+- destructive filesystem 또는 container action 없음
+- Docker 및 Linux check는 read-only 중심
+- CVE match는 advisory 정보이며 수동 검증 필요
 
 ## License
 
