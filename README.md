@@ -1,8 +1,12 @@
 # WebSecScope (WSS)
 
-WebSecScope는 Web Application, Linux host, Docker 환경, service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한 방어적 rule-based 보안 진단 CLI.
+WebSecScope는 Web Application, Linux host, Docker 환경,       
+service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한     
+방어적 rule-based 보안 진단 CLI.
 
-v2.1 이후의 Ollama/Qwen2.5 AI Report는 선택 기능. LLM은 취약점 탐지를 수행하지 않으며, finding은 scanner/analyzer 기반 rule-based pipeline에서만 생성. LLM은 이미 생성된 rule-based JSON을 요약하고 설명하는 역할.
+v2.1 이후의 Ollama/Qwen2.5 AI Report는 선택 기능.      
+LLM은 취약점 탐지를 수행하지 않으며, finding은 scanner/analyzer 기반 rule-based pipeline에서만 생성.     
+LLM은 이미 생성된 rule-based JSON을 요약하고 설명하는 역할.
 
 영문 문서는 [README_EN.md](README_EN.md)에 별도 제공.
 
