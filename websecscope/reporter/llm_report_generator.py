@@ -59,10 +59,77 @@ class OllamaClient:
 
 def build_llm_prompt(request: LLMReportRequest) -> str:
     """Build a prompt that forbids LLM-based detection and uses only scanner output."""
+    return build_prompt(request)
+
+
+def build_prompt(request: LLMReportRequest) -> str:
+    """Build a localized prompt from rule-based scan JSON only."""
     result = _safe_rule_based_payload(request.rule_based_result)
     payload = json.dumps(result, ensure_ascii=False, indent=2)
     if request.language == "ko":
-        return f"""당신은 보안 취약점 탐지기가 아니라 보안 리포트 작성자입니다.
+        return _korean_prompt(payload)
+    return _english_prompt(payload)
+
+
+def generate_llm_report(request: LLMReportRequest, client: LLMClient | None = None) -> dict[str, Any]:
+    """Generate an optional narrative report when a client is supplied.
+
+    v2 intentionally does not make LLM output part of detection. Without a client,
+    this returns a prepared prompt so the normal rule-based JSON/HTML report path
+    continues to work unchanged.
+    """
+    prompt = build_prompt(request)
+    if client is None:
+        client = OllamaClient(endpoint=request.endpoint)
+    try:
+        content = call_ollama(client, prompt, request.model)
+    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+        return build_fallback_report(request, client, prompt, exc)
+    return build_success_report(request, client, prompt, content)
+
+
+def call_ollama(client: LLMClient, prompt: str, model: str) -> str:
+    return client.generate(prompt, model=model)
+
+
+def build_fallback_report(
+    request: LLMReportRequest,
+    client: LLMClient,
+    prompt: str,
+    error: Exception,
+) -> dict[str, Any]:
+    return {
+        "enabled": False,
+        "provider": client.__class__.__name__,
+        "model": request.model,
+        "endpoint": request.endpoint,
+        "prompt": prompt,
+        "content": None,
+        "error": f"{type(error).__name__}: Ollama request failed",
+        "note": "LLM report generation failed gracefully. Detection and reports remain rule-based.",
+    }
+
+
+def build_success_report(
+    request: LLMReportRequest,
+    client: LLMClient,
+    prompt: str,
+    content: str,
+) -> dict[str, Any]:
+    return {
+        "enabled": True,
+        "provider": client.__class__.__name__,
+        "model": request.model,
+        "endpoint": request.endpoint,
+        "prompt": prompt,
+        "content": content,
+        "error": None,
+        "note": "LLM output is narrative only and must not add findings.",
+    }
+
+
+def _korean_prompt(payload: str) -> str:
+    return f"""당신은 보안 취약점 탐지기가 아니라 보안 리포트 작성자입니다.
 
 규칙:
 - 아래 rule-based JSON만 근거로 사용하세요.
@@ -77,6 +144,9 @@ def build_llm_prompt(request: LLMReportRequest) -> str:
 Rule-based JSON:
 {payload}
 """
+
+
+def _english_prompt(payload: str) -> str:
     return f"""You are a security report writer, not a vulnerability scanner.
 
 Rules:
@@ -92,41 +162,6 @@ Rules:
 Rule-based JSON:
 {payload}
 """
-
-
-def generate_llm_report(request: LLMReportRequest, client: LLMClient | None = None) -> dict[str, Any]:
-    """Generate an optional narrative report when a client is supplied.
-
-    v2 intentionally does not make LLM output part of detection. Without a client,
-    this returns a prepared prompt so the normal rule-based JSON/HTML report path
-    continues to work unchanged.
-    """
-    prompt = build_llm_prompt(request)
-    if client is None:
-        client = OllamaClient(endpoint=request.endpoint)
-    try:
-        content = client.generate(prompt, model=request.model)
-    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
-        return {
-            "enabled": False,
-            "provider": client.__class__.__name__,
-            "model": request.model,
-            "endpoint": request.endpoint,
-            "prompt": prompt,
-            "content": None,
-            "error": f"{type(exc).__name__}: Ollama request failed",
-            "note": "LLM report generation failed gracefully. Detection and reports remain rule-based.",
-        }
-    return {
-        "enabled": True,
-        "provider": client.__class__.__name__,
-        "model": request.model,
-        "endpoint": request.endpoint,
-        "prompt": prompt,
-        "content": content,
-        "error": None,
-        "note": "LLM output is narrative only and must not add findings.",
-    }
 
 
 def _safe_rule_based_payload(result: dict[str, Any]) -> dict[str, Any]:

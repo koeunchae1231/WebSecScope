@@ -9,6 +9,8 @@ from websecscope.reporter.llm_report_generator import LLMReportRequest, generate
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
 
+AI_REPORT_NOTICE = "Findings were detected by the rule-based engine. The LLM only summarized and explained the results."
+
 
 def write_html_report(result: dict[str, Any], output_path: str | Path, language: str | None = None) -> Path:
     output = ensure_parent(output_path)
@@ -20,7 +22,7 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
     executive_section = _executive_section(result, summary)
     severity_section = _severity_section(summary)
     top_risks_section = _top_risks_section(summary.get("top_risks", []))
-    finding_sections = _finding_sections(findings)
+    finding_sections = render_findings_sections(findings)
     web_section = _category_section(text("web_security", lang), findings, {"web"})
     api_section = _category_section(text("api_auth_security", lang), findings, {"api", "auth", "jwt", "cors", "idor", "rate_limit"})
     linux_section = _linux_section(result.get("linux_scan", {}), result.get("linux_findings", []))
@@ -30,7 +32,8 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
     cve_rows = "\n".join(_cve_row(item) for item in result.get("cve_lookup", {}).get("items", []))
     cve_section = _cve_section(cve_rows, result.get("cve_findings", []), result.get("cve_lookup", {}))
     ai_report = generate_llm_report(LLMReportRequest(rule_based_result=result, language=lang))
-    ai_section = _ai_report_section(ai_report, lang)
+    ai_section = render_ai_report_section(ai_report, lang)
+    header_section = _render_header(result, lang)
     html = f"""<!doctype html>
 <html lang="{escape(lang)}">
 <head>
@@ -82,18 +85,7 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
   </style>
 </head>
 <body>
-  <header>
-    <div class="hero">
-      <div>
-        <h1>{escape(text("title", lang))}</h1>
-        <div class="meta">{escape(text("target", lang))}: {escape(str(result.get("target", "")))} | {escape(text("generated", lang))}: {escape(str(result.get("generated_at", "")))} | {escape(text("language", lang))}: {escape(lang)}</div>
-      </div>
-      <div class="score-wrap">
-        <div class="gauge" style="--score: {escape(str(result.get("score", 0)))}"><div class="gauge-inner">{escape(str(result.get("score", "N/A")))}</div></div>
-        <div><div class="score {score_class(result.get("score", 0))}">{escape(str(result.get("grade", "N/A")))}</div><div class="meta">{escape(text("before_after_ready", lang))}</div></div>
-      </div>
-    </div>
-  </header>
+  {header_section}
   <main>
     {executive_section}
     {severity_section}
@@ -136,6 +128,28 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
     return output
 
 
+def _render_header(result: dict[str, Any], language: str) -> str:
+    return f"""
+  <header>
+    <div class="hero">
+      <div>
+        <h1>{escape(text("title", language))}</h1>
+        <div class="meta">{escape(text("target", language))}: {escape(str(result.get("target", "")))} | {escape(text("generated", language))}: {escape(str(result.get("generated_at", "")))} | {escape(text("language", language))}: {escape(language)}</div>
+      </div>
+      <div class="score-wrap">
+        {render_score_gauge(result)}
+        <div><div class="score {score_class(result.get("score", 0))}">{escape(str(result.get("grade", "N/A")))}</div><div class="meta">{escape(text("before_after_ready", language))}</div></div>
+      </div>
+    </div>
+  </header>"""
+
+
+def render_score_gauge(result: dict[str, Any]) -> str:
+    score = escape(str(result.get("score", 0)))
+    label = escape(str(result.get("score", "N/A")))
+    return f'<div class="gauge" style="--score: {score}"><div class="gauge-inner">{label}</div></div>'
+
+
 def _finding_row(finding: dict[str, Any]) -> str:
     status = escape(str(finding.get("status", "WARNING")))
     severity = str(finding.get("severity", finding.get("risk", "")))
@@ -174,14 +188,17 @@ def _severity_section(summary: dict[str, Any]) -> str:
     return f"""
     <section class="section">
       <h2>Findings Summary by Severity</h2>
-      <div class="grid">
-        <div class="card severity-card critical">Critical<strong class="risk-critical">{escape(str(summary.get("critical", 0)))}</strong></div>
-        <div class="card severity-card high">High<strong class="risk-high">{escape(str(summary.get("high", 0)))}</strong></div>
-        <div class="card severity-card medium">Medium<strong class="risk-medium">{escape(str(summary.get("medium", 0)))}</strong></div>
-        <div class="card severity-card low">Low<strong class="risk-low">{escape(str(summary.get("low", 0)))}</strong></div>
-        <div class="card severity-card informational">Informational<strong class="risk-informational">{escape(str(summary.get("informational", 0)))}</strong></div>
-      </div>
+      {render_severity_cards(summary)}
     </section>"""
+
+
+def render_severity_cards(summary: dict[str, Any]) -> str:
+    severities = ("critical", "high", "medium", "low", "informational")
+    cards = "\n".join(
+        f'<div class="card severity-card {severity}">{severity.title()}<strong class="risk-{severity}">{escape(str(summary.get(severity, 0)))}</strong></div>'
+        for severity in severities
+    )
+    return f'<div class="grid">{cards}</div>'
 
 
 def _top_risks_section(top_risks: list[dict[str, Any]]) -> str:
@@ -241,7 +258,7 @@ def _category_section(title: str, findings: list[dict[str, Any]], categories: se
     </section>"""
 
 
-def _finding_sections(findings: list[dict[str, Any]]) -> str:
+def render_findings_sections(findings: list[dict[str, Any]]) -> str:
     if not findings:
         return ""
     by_category = _count_by(findings, "category")
@@ -273,9 +290,8 @@ def _count_by(findings: list[dict[str, Any]], key: str) -> dict[str, int]:
     return counts
 
 
-def _ai_report_section(ai_report: dict[str, Any], language: str) -> str:
-    notice = "Findings were detected by the rule-based engine. The LLM only summarized and explained the results."
-    notice_text = notice if language == "en" else f"{notice} 탐지는 rule-based engine이 수행했으며, LLM은 결과를 요약하고 설명만 합니다."
+def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
+    notice_text = AI_REPORT_NOTICE if language == "en" else f"{AI_REPORT_NOTICE} 탐지는 rule-based engine이 수행했으며, LLM은 결과를 요약하고 설명만 합니다."
     if ai_report.get("content"):
         body = _render_ai_text(str(ai_report.get("content", "")))
         status = f"Model: {escape(str(ai_report.get('model', '')))}"
