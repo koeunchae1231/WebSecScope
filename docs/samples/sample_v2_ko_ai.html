@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebSecScope 보안 리포트</title>
+  <style>
+    :root { --bg: #eef3f8; --ink: #17202a; --muted: #607089; --line: #d8dee9; --panel: #ffffff; --navy: #14213d; --teal: #0f766e; --red: #b91c1c; --orange: #b45309; --blue: #2563eb; --slate: #475569; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; color: var(--ink); background: var(--bg); }
+    header { background: linear-gradient(135deg, #14213d 0%, #0f766e 100%); color: white; padding: 30px 38px; }
+    main { padding: 28px 36px; max-width: 1320px; margin: 0 auto; }
+    h1, h2, h3 { letter-spacing: 0; }
+    h2 { margin-top: 0; }
+    h3 { margin: 18px 0 8px; }
+    table { border-collapse: collapse; width: 100%; background: white; margin-top: 10px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; font-size: 14px; }
+    th { background: #edf2f7; color: #243447; }
+    .hero { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .score-wrap { display: grid; grid-template-columns: 132px minmax(140px, 1fr); gap: 18px; align-items: center; }
+    .gauge { width: 132px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(#22c55e calc(var(--score) * 1%), rgba(255,255,255,.22) 0); }
+    .gauge-inner { width: 94px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: #ffffff; color: #14213d; font-size: 30px; font-weight: 800; }
+    .score { display: inline-block; min-width: 76px; padding: 10px 14px; border-radius: 6px; font-size: 26px; font-weight: bold; }
+    .score.good { background: #d1fae5; color: #065f46; }
+    .score.warn { background: #fef3c7; color: #92400e; }
+    .score.bad { background: #fee2e2; color: #991b1b; }
+    .badge { display: inline-block; padding: 3px 7px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+    .pass { background: #dcfce7; color: #166534; }
+    .fail { background: #fee2e2; color: #991b1b; }
+    .warning { background: #fef3c7; color: #92400e; }
+    .meta { color: #dbeafe; margin-top: 8px; }
+    .section { margin-bottom: 24px; background: white; border: 1px solid var(--line); border-radius: 8px; padding: 18px; box-shadow: 0 10px 24px rgba(20,33,61,.06); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .card { background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+    .card strong { display: block; font-size: 22px; margin-top: 6px; }
+    .severity-card { border-left: 6px solid var(--slate); }
+    .severity-card.critical { border-left-color: #7f1d1d; background: #fff1f2; }
+    .severity-card.high { border-left-color: #b91c1c; background: #fef2f2; }
+    .severity-card.medium { border-left-color: #b45309; background: #fff7ed; }
+    .severity-card.low { border-left-color: #2563eb; background: #eff6ff; }
+    .severity-card.informational { border-left-color: #475569; background: #f8fafc; }
+    .muted { color: var(--muted); }
+    .subtle { font-size: 12px; color: var(--muted); }
+    .risk-critical { color: #7f1d1d; font-weight: bold; }
+    .risk-high { color: #991b1b; font-weight: bold; }
+    .risk-medium { color: #92400e; font-weight: bold; }
+    .risk-low { color: #1d4ed8; font-weight: bold; }
+    .risk-informational { color: #475569; font-weight: bold; }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <div class="hero">
+      <div>
+        <h1>WebSecScope 보안 리포트</h1>
+        <div class="meta">Target: http://127.0.0.1 | Generated: 2026-06-20T23:29:27.112661+00:00 | Language: ko</div>
+      </div>
+      <div class="score-wrap">
+        <div class="gauge" style="--score: 96"><div class="gauge-inner">96</div></div>
+        <div><div class="score good">A</div><div class="meta">Before/After comparison-ready report structure</div></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    
+    <section class="section">
+      <h2>Executive Summary</h2>
+      <div class="grid">
+        <div class="card">Security Score<strong>96</strong></div>
+        <div class="card">Grade<strong>A</strong></div>
+        <div class="card">Findings<strong>2</strong></div>
+        <div class="card">Effective Findings<strong>1</strong></div>
+      </div>
+      <p class="muted">Target: http://127.0.0.1 | Generated: 2026-06-20T23:29:27.112661+00:00</p>
+    </section>
+    
+    <section class="section">
+      <h2>Findings Summary by Severity</h2>
+      <div class="grid"><div class="card severity-card critical">Critical<strong class="risk-critical">0</strong></div>
+<div class="card severity-card high">High<strong class="risk-high">0</strong></div>
+<div class="card severity-card medium">Medium<strong class="risk-medium">1</strong></div>
+<div class="card severity-card low">Low<strong class="risk-low">0</strong></div>
+<div class="card severity-card informational">Informational<strong class="risk-informational">0</strong></div></div>
+    </section>
+    
+    <section class="section">
+      <h2>Top Risks</h2>
+      <table>
+        <thead><tr><th>Severity</th><th>Category</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr>
+          <td><span class="risk-medium">중간</span></td>
+          <td>web</td>
+          <td>A05 Security Misconfiguration</td>
+          <td>Target was not reachable</td>
+          <td>URLError: request failed</td>
+        </tr></tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+      <h2>Findings by Category and OWASP</h2>
+      <div class="grid"><div class="card">cve<strong>1</strong></div><div class="card">web<strong>1</strong></div></div>
+      <table>
+        <thead><tr><th>OWASP Top 10 Category</th><th>Findings</th></tr></thead>
+        <tbody><tr><td>A05 Security Misconfiguration</td><td>1</td></tr><tr><td>A06 Vulnerable and Outdated Components</td><td>1</td></tr></tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+      <h2>Web Security</h2>
+      <table>
+        <thead><tr><th>Status</th><th>Severity</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr>
+          <td><span class="badge warning">WARNING</span></td>
+          <td><span class="risk-medium">중간</span></td>
+          <td>A05 Security Misconfiguration</td>
+          <td>Target was not reachable</td>
+          <td>URLError: request failed</td>
+        </tr></tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+      <h2>API/Auth Security</h2>
+      <table>
+        <thead><tr><th>Status</th><th>Severity</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
+        <tbody>
+        <tr>
+          <td colspan="5">No findings available for this section.</td>
+        </tr></tbody>
+      </table>
+    </section>
+    <section class="section">
+      <h2>Service &amp; Version Detection</h2>
+      
+    <section class="section">
+      <h2>Service Detection</h2>
+      <p>No service findings available.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Port</th>
+            <th>Protocol</th>
+            <th>Service</th>
+            <th>Version</th>
+            <th>Confidence</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="6">No service/version items available.</td>
+        </tr></tbody>
+      </table>
+    </section>
+    </section>
+    
+    <section class="section">
+      <h2>CVE / CVSS</h2>
+      <p>informational: CVE/CVSS 분석 구조</p>
+      <table>
+        <thead>
+          <tr>
+            <th>CVE ID</th>
+            <th>CVSS</th>
+            <th>Severity</th>
+            <th>Product / Version</th>
+            <th>Confidence</th>
+            <th>Description</th>
+            <th>References</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="7">No CVE items available.</td>
+        </tr></tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+      <h2>Linux Security</h2>
+      <p>Linux checks skipped: Linux scan skipped by CLI option.</p>
+      <table>
+        <tbody>
+          <tr><th>Status</th><td>skipped</td></tr>
+          <tr><th>Platform</th><td>unknown</td></tr>
+          <tr><th>Findings</th><td>No Linux findings available.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+      <h2>Docker Security</h2>
+      <p>Docker checks skipped: Docker scan skipped by CLI option.</p>
+      <table>
+        <tbody>
+          <tr><th>Status</th><td>skipped</td></tr>
+          <tr><th>Reason</th><td>Docker scan skipped by CLI option.</td></tr>
+          <tr><th>Findings</th><td>No Docker findings available.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <section class="section">
+    <h2>All Findings</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Severity</th>
+          <th>Category</th>
+          <th>OWASP</th>
+          <th>Finding</th>
+          <th>Interpretation</th>
+          <th>Evidence</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge warning">WARNING</span></td>
+          <td><span class="risk-medium">중간</span></td>
+          <td>web</td>
+          <td>A05 Security Misconfiguration</td>
+          <td>Target was not reachable</td>
+          <td>Target was not reachable</td>
+          <td>URLError: request failed</td>
+          <td>네트워크 접근, DNS, TLS 설정, 진단 권한을 확인하세요.</td>
+        </tr>
+
+        <tr>
+          <td><span class="badge warning">WARNING</span></td>
+          <td><span class="risk-informational">정보</span></td>
+          <td>cve</td>
+          <td>A06 Vulnerable and Outdated Components</td>
+          <td>CVE/CVSS 분석 구조</td>
+          <td>CVE lookup is based on detected product/version evidence and remains advisory until manually verified.</td>
+          <td>CVE lookup skipped by CLI option.</td>
+          <td>서비스 배너 또는 패키지 인벤토리를 수집해 CVE 매칭 정확도를 높이세요.</td>
+        </tr></tbody>
+    </table>
+    </section>
+    
+    <section class="section">
+      <h2>AI Report</h2>
+      <p class="muted">Findings were detected by the rule-based engine. The LLM only summarized and explained the results. 탐지는 rule-based engine이 수행했으며, LLM은 결과를 요약하고 설명만 합니다.</p>
+      <p class="subtle">Model: qwen2.5:7b</p>
+      <div><h3>Executive Summary</h3>
+<p>이 보안 리포트는 특정 웹 서비스의 보안 상태를 평가한 결과입니다. 총 2개의 취약점을 탐지했으나, 실제로 위험을 인정받은 취약점은 1개로, 중간 수준의 위험성을 가집니다.</p>
+<h3>Risk Analysis</h3>
+<h3>1. 웹 서비스 접근 불가
+- **취약점 ID**: WEB_REACHABILITY
+- **위험 등급**: 중간 (MEDIUM)
+- **증거**: URLError: request failed
+- **해석**: 타겟은 네트워크에서 접근할 수 없습니다. 이는 DNS 설정, TLS 설정 또는 네트워크 접근 권한 문제로 인한 것으로 보입니다.</h3>
+<h3>2. CVE/CVSS 분석 구조
+- **취약점 ID**: CVE_SERVICE_INVENTORY
+- **위험 등급**: 정보 (INFORMATIONAL)
+- **증거**: CVE lookup skipped by CLI option.
+- **해석**: CVE 조회는 탐지된 제품/버전 근거를 기반으로 하지만, 수동 검증 전까지는 참고 정보로 남아 있습니다. 서비스 배너 또는 패키지 인벤토리를 수집하여 CVE 매칭 정확도를 높이는 것이 추천됩니다.</h3>
+<h3>Priority Recommendations</h3>
+<p>1. 네트워크 접근 및 DNS 설정을 확인하고, 필요한 경우 수정하세요.<br>2. TLS 설정을 점검하고, 보안이 약한 경우 강화하세요.<br>3. 서비스 배너 또는 패키지 인벤토리를 수집하여 CVE 매칭 정확도를 높이는 것이 추천됩니다.</p></div>
+    </section>
+  </main>
+</body>
+</html>

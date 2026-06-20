@@ -152,8 +152,8 @@ HTML reports include:
 
 Sample reports generated during verification:
 
-- [Korean AI sample](reports/sample_v2_ko_ai.html)
-- [English AI sample](reports/sample_v2_en_ai.html)
+- [Korean AI sample](docs/samples/sample_v2_ko_ai.html)
+- [English AI sample](docs/samples/sample_v2_en_ai.html)
 
 The matching sample JSON files are:
 

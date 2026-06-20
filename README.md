@@ -158,8 +158,8 @@ HTML report 주요 section:
 
 검증 과정에서 생성한 sample report:
 
-- [Korean AI sample](reports/sample_v2_ko_ai.html)
-- [English AI sample](reports/sample_v2_en_ai.html)
+- [Korean AI sample](docs/samples/sample_v2_ko_ai.html)
+- [English AI sample](docs/samples/sample_v2_en_ai.html)
 
 matching sample JSON:
 
@@ -274,22 +274,7 @@ python main.py report --input reports/result.json --output reports/result.html
 
 ## 프로젝트 구조
 
-```text
-main.py
-  -> websecscope/cli.py
-    -> websecscope/scanner/
-    -> websecscope/analyzer/
-    -> websecscope/models.py
-    -> websecscope/reporter/
-      -> json_reporter.py
-      -> html_reporter.py
-      -> llm_report_generator.py
-    -> websecscope/i18n.py
-    -> websecscope/owasp.py
-    -> websecscope/config/settings.py
-```
-
-학습용 상세 구조 문서:
+상세 code flow와 module 역할은 별도 문서로 분리:
 
 - [docs/architecture/CodeStructure.md](docs/architecture/CodeStructure.md)
 
