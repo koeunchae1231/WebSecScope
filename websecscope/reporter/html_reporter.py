@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from websecscope.i18n import normalize_language, severity_label, text
+from websecscope.reporter.llm_report_generator import LLMReportRequest, generate_llm_report
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
 
@@ -28,6 +29,8 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
     service_section = _service_section(service_rows, result.get("service_findings", []))
     cve_rows = "\n".join(_cve_row(item) for item in result.get("cve_lookup", {}).get("items", []))
     cve_section = _cve_section(cve_rows, result.get("cve_findings", []), result.get("cve_lookup", {}))
+    ai_report = generate_llm_report(LLMReportRequest(rule_based_result=result, language=lang))
+    ai_section = _ai_report_section(ai_report, lang)
     html = f"""<!doctype html>
 <html lang="{escape(lang)}">
 <head>
@@ -124,6 +127,7 @@ def write_html_report(result: dict[str, Any], output_path: str | Path, language:
       <tbody>{rows}</tbody>
     </table>
     </section>
+    {ai_section}
   </main>
 </body>
 </html>
@@ -267,6 +271,44 @@ def _count_by(findings: list[dict[str, Any]], key: str) -> dict[str, int]:
         value = str(finding.get(key) or "Unmapped")
         counts[value] = counts.get(value, 0) + 1
     return counts
+
+
+def _ai_report_section(ai_report: dict[str, Any], language: str) -> str:
+    notice = "Findings were detected by the rule-based engine. The LLM only summarized and explained the results."
+    notice_text = notice if language == "en" else f"{notice} 탐지는 rule-based engine이 수행했으며, LLM은 결과를 요약하고 설명만 합니다."
+    if ai_report.get("content"):
+        body = _render_ai_text(str(ai_report.get("content", "")))
+        status = f"Model: {escape(str(ai_report.get('model', '')))}"
+    else:
+        error = ai_report.get("error") or "Ollama is not configured or did not return content."
+        fallback = (
+            "AI report is unavailable. The rule-based JSON and HTML report were generated normally."
+            if language == "en"
+            else "AI 리포트를 생성할 수 없습니다. rule-based JSON/HTML 리포트는 정상 생성되었습니다."
+        )
+        body = f"<p>{escape(fallback)}</p><p class=\"subtle\">{escape(str(error))}</p>"
+        status = f"Model: {escape(str(ai_report.get('model', '')))} | Fallback"
+    return f"""
+    <section class="section">
+      <h2>AI Report</h2>
+      <p class="muted">{escape(notice_text)}</p>
+      <p class="subtle">{status}</p>
+      <div>{body}</div>
+    </section>"""
+
+
+def _render_ai_text(content: str) -> str:
+    blocks = []
+    for raw_block in content.replace("\r\n", "\n").split("\n\n"):
+        block = raw_block.strip()
+        if not block:
+            continue
+        if block.startswith("#"):
+            heading = block.lstrip("#").strip()
+            blocks.append(f"<h3>{escape(heading)}</h3>")
+        else:
+            blocks.append(f"<p>{escape(block).replace(chr(10), '<br>')}</p>")
+    return "\n".join(blocks) if blocks else "<p>No AI content returned.</p>"
 
 
 def _linux_section(linux_scan: dict[str, Any], linux_findings: list[dict[str, Any]]) -> str:
