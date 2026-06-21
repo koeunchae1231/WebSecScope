@@ -136,6 +136,9 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
                     "severity_label": finding.get("severity_label", severity),
                     "owasp_category": finding.get("owasp_category", "Unmapped"),
                     "evidence": finding.get("evidence", ""),
+                    "interpretation": finding.get("interpretation", finding.get("description", "")),
+                    "description": finding.get("description", ""),
+                    "recommendation": finding.get("recommendation", ""),
                 }
             )
     return {

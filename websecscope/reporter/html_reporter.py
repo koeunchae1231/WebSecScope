@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from html import escape
 from pathlib import Path
@@ -16,15 +17,18 @@ AI_REPORT_NOTICE = (
     "The LLM only summarized and explained the results."
 )
 AI_REPORT_NOTICE_KO = (
-    "Findings는 rule-based engine이 탐지했습니다. "
+    "진단 항목은 rule-based engine이 탐지했습니다. "
     "LLM은 결과를 요약하고 설명만 합니다."
 )
 AI_REPORT_TITLE = {"ko": "AI 리포트", "en": "AI Report"}
 AI_HEADING_TRANSLATIONS = {
     "ko": {
         "Executive Summary": "요약",
-        "Risk Analysis": "위험 분석",
-        "Priority Recommendations": "우선 개선 권고",
+        "Risk Analysis": "위험 설명",
+        "Risk Explanation": "위험 설명",
+        "Priority Recommendations": "우선 조치",
+        "Priority Actions": "우선 조치",
+        "Limitations": "점검 한계",
     }
 }
 
@@ -45,14 +49,15 @@ def write_html_report(
     result["summary"] = summary
     rows = "\n".join(_finding_row(finding) for finding in findings)
     executive_section = _executive_section(result, summary)
-    severity_section = _severity_section(summary)
-    top_risks_section = _top_risks_section(summary.get("top_risks", []))
-    finding_sections = render_findings_sections(findings)
-    web_section = _category_section(text("web_security", lang), findings, {"web"})
+    severity_section = _severity_section(summary, lang)
+    top_risks_section = _top_risks_section(summary.get("top_risks", []), lang)
+    finding_sections = render_findings_sections(findings, lang)
+    web_section = _category_section(text("web_security", lang), findings, {"web"}, lang)
     api_section = _category_section(
         text("api_auth_security", lang),
         findings,
         {"api", "auth", "jwt", "cors", "idor", "rate_limit"},
+        lang,
     )
     linux_section = _linux_section(
         result.get("linux_scan", {}),
@@ -128,6 +133,30 @@ def write_html_report(
     .risk-medium {{ color: #92400e; font-weight: bold; }}
     .risk-low {{ color: #1d4ed8; font-weight: bold; }}
     .risk-informational {{ color: #475569; font-weight: bold; }}
+    .section p {{ line-height: 1.7; }}
+    .section-title-row {{ display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }}
+    .explain {{ margin-top: 18px; padding: 18px; border-radius: 8px; background: #f8fafc; border: 1px solid var(--line); line-height: 1.7; }}
+    .risk-list, .finding-list {{ display: grid; gap: 16px; }}
+    .risk-card, .finding-card {{ background: #ffffff; border: 1px solid var(--line); border-left: 6px solid var(--slate); border-radius: 8px; padding: 18px; box-shadow: 0 8px 18px rgba(20,33,61,.05); overflow-wrap: anywhere; }}
+    .risk-card.critical, .finding-card.critical {{ border-left-color: #7f1d1d; }}
+    .risk-card.high, .finding-card.high {{ border-left-color: #b91c1c; }}
+    .risk-card.medium, .finding-card.medium {{ border-left-color: #b45309; }}
+    .risk-card.low, .finding-card.low {{ border-left-color: #2563eb; }}
+    .risk-card.informational, .finding-card.informational {{ border-left-color: #475569; }}
+    .risk-head, .finding-head {{ display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }}
+    .risk-title, .finding-title {{ margin: 0; font-size: 17px; line-height: 1.45; }}
+    .detail-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }}
+    .detail {{ padding: 12px; border-radius: 8px; background: #f8fafc; border: 1px solid var(--line); line-height: 1.65; }}
+    .detail b {{ display: block; margin-bottom: 4px; color: #243447; }}
+    .compact-table th, .compact-table td {{ font-size: 13px; }}
+    @media (max-width: 720px) {{
+      header {{ padding: 24px 20px; }}
+      main {{ padding: 20px 14px; }}
+      .score-wrap {{ grid-template-columns: 1fr; }}
+      .gauge {{ width: 112px; }}
+      .gauge-inner {{ width: 78px; font-size: 24px; }}
+      th, td {{ padding: 9px 8px; }}
+    }}
   </style>
 </head>
 <body>
@@ -147,24 +176,7 @@ def write_html_report(
     {linux_section}
     {docker_section}
     {_recheck_section(result)}
-    <section class="section">
-    <h2>{escape(text("all_findings", lang))}</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>{escape(text("status", lang))}</th>
-          <th>{escape(text("severity", lang))}</th>
-          <th>{escape(text("category", lang))}</th>
-          <th>OWASP</th>
-          <th>{escape(text("finding", lang))}</th>
-          <th>{escape(text("interpretation", lang))}</th>
-          <th>{escape(text("evidence", lang))}</th>
-          <th>{escape(text("recommendation", lang))}</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
-    </section>
+    {_all_findings_section(findings, lang)}
     {ai_section}
   </main>
 </body>
@@ -217,74 +229,208 @@ def _finding_row(finding: dict[str, Any]) -> str:
         </tr>"""
 
 
+def _all_findings_section(findings: list[dict[str, Any]], language: str) -> str:
+    if not findings:
+        body = f'<p class="muted">{escape(text("no_findings", language))}</p>'
+    else:
+        body = '<div class="finding-list">' + "\n".join(
+            _finding_card(finding, language) for finding in findings
+        )
+        body += "</div>"
+    return f"""
+    <section class="section">
+      <h2>{escape(text("all_findings", language))}</h2>
+      {body}
+    </section>"""
+
+
+def _finding_card(finding: dict[str, Any], language: str) -> str:
+    status = str(finding.get("status", "WARNING"))
+    severity = str(finding.get("severity", finding.get("risk", "informational")))
+    severity_text = str(finding.get("severity_label") or severity_label(severity, language))
+    interpretation = str(finding.get("interpretation", finding.get("description", "")))
+    recommendation = str(finding.get("recommendation", ""))
+    evidence = str(finding.get("evidence", ""))
+    return f"""
+        <article class="finding-card {escape(severity)}">
+          <div class="finding-head">
+            <h3 class="finding-title">{escape(str(finding.get("title", "")))}</h3>
+            <span>
+              <span class="badge {status_class(status)}">{escape(status)}</span>
+              <span class="risk-{escape(severity)}">{escape(severity_text)}</span>
+            </span>
+          </div>
+          <p class="muted">{escape(str(finding.get("category", "")))} | {escape(str(finding.get("owasp_category", "")))}</p>
+          <div class="detail-grid">
+            <div class="detail"><b>{escape(text("interpretation", language))}</b>{escape(interpretation or _unknown_text(language))}</div>
+            <div class="detail"><b>{escape(text("evidence", language))}</b>{escape(_shorten(evidence, 420) or _unknown_text(language))}</div>
+            <div class="detail"><b>{escape(text("recommendation", language))}</b>{escape(recommendation or _unknown_text(language))}</div>
+          </div>
+        </article>"""
+
+
 def _executive_section(result: dict[str, Any], summary: dict[str, Any]) -> str:
     score = result.get("score", "N/A")
     grade = result.get("grade", "N/A")
     lang = result.get("language")
+    top_risks = summary.get("top_risks", [])
+    top_risk_text = _top_risk_sentence(top_risks, lang)
+    action_text = _priority_action_sentence(top_risks, lang)
     return f"""
     <section class="section">
-      <h2>{escape(text("executive_summary", lang))}</h2>
+      <div class="section-title-row">
+        <h2>{escape(text("executive_summary", lang))}</h2>
+        <span class="subtle">{escape(text("analysis_completed", lang))}</span>
+      </div>
       <div class="grid">
         <div class="card">{escape(text("security_score", lang))}<strong>{escape(str(score))}</strong></div>
         <div class="card">{escape(text("grade", lang))}<strong>{escape(str(grade))}</strong></div>
         <div class="card">{escape(text("findings", lang))}<strong>{escape(str(summary.get("total", 0)))}</strong></div>
         <div class="card">{escape(text("effective_findings", lang))}<strong>{escape(str(summary.get("effective_total", 0)))}</strong></div>
       </div>
+      <div class="explain">
+        <p>{escape(_score_explanation(score, grade, lang))}</p>
+        <p>{escape(top_risk_text)}</p>
+        <p>{escape(action_text)}</p>
+      </div>
       <p class="muted">{escape(text("target", lang))}: {escape(str(result.get("target", "")))} | {escape(text("generated", lang))}: {escape(str(result.get("generated_at", "")))}</p>
     </section>"""
 
 
-def _severity_section(summary: dict[str, Any]) -> str:
+def _severity_section(summary: dict[str, Any], language: str) -> str:
     return f"""
     <section class="section">
-      <h2>Findings Summary by Severity</h2>
-      {render_severity_cards(summary)}
+      <h2>{escape(text("severity_summary", language))}</h2>
+      {render_severity_cards(summary, language)}
     </section>"""
 
 
-def render_severity_cards(summary: dict[str, Any]) -> str:
+def render_severity_cards(summary: dict[str, Any], language: str = "en") -> str:
     severities = ("critical", "high", "medium", "low", "informational")
     cards = "\n".join(
-        f'<div class="card severity-card {severity}">{severity.title()}<strong class="risk-{severity}">{escape(str(summary.get(severity, 0)))}</strong></div>'
+        f'<div class="card severity-card {severity}">{escape(severity_label(severity, language))}<strong class="risk-{severity}">{escape(str(summary.get(severity, 0)))}</strong></div>'
         for severity in severities
     )
     return f'<div class="grid">{cards}</div>'
 
 
-def _top_risks_section(top_risks: list[dict[str, Any]]) -> str:
+def _top_risks_section(top_risks: list[dict[str, Any]], language: str) -> str:
     if not top_risks:
-        rows = """
-        <tr>
-          <td colspan="4">No high-priority risks were identified.</td>
-        </tr>"""
+        body = f'<p class="muted">{escape(text("no_top_risks", language))}</p>'
     else:
-        rows = "\n".join(
-            f"""
-        <tr>
-          <td><span class="risk-{escape(str(risk.get('severity', 'informational')))}">{escape(str(risk.get('severity_label', risk.get('severity', 'informational'))))}</span></td>
-          <td>{escape(str(risk.get('category', '')))}</td>
-          <td>{escape(str(risk.get('owasp_category', '')))}</td>
-          <td>{escape(str(risk.get('title', '')))}</td>
-          <td>{escape(_shorten(str(risk.get('evidence', '')), 180))}</td>
-        </tr>"""
-            for risk in top_risks
+        body = '<div class="risk-list">' + "\n".join(
+            _risk_card(risk, language) for risk in top_risks[:6]
         )
+        body += "</div>"
     return f"""
     <section class="section">
-      <h2>Top Risks</h2>
-      <table>
-        <thead><tr><th>Severity</th><th>Category</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
-        <tbody>{rows}</tbody>
-      </table>
+      <h2>{escape(text("top_risks", language))}</h2>
+      {body}
     </section>"""
 
 
-def _category_section(title: str, findings: list[dict[str, Any]], categories: set[str]) -> str:
+def _risk_card(risk: dict[str, Any], language: str) -> str:
+    severity = str(risk.get("severity", "informational"))
+    severity_text = str(risk.get("severity_label") or severity_label(severity, language))
+    description = str(risk.get("interpretation") or risk.get("description") or "")
+    recommendation = str(risk.get("recommendation") or "")
+    evidence = str(risk.get("evidence") or "")
+    return f"""
+        <article class="risk-card {escape(severity)}">
+          <div class="risk-head">
+            <h3 class="risk-title">{escape(str(risk.get("title", "")))}</h3>
+            <span class="risk-{escape(severity)}">{escape(severity_text)}</span>
+          </div>
+          <p class="muted">{escape(str(risk.get("category", "")))} | {escape(str(risk.get("owasp_category", "")))}</p>
+          <div class="detail-grid">
+            <div class="detail"><b>{escape(text("description", language))}</b>{escape(description or _unknown_text(language))}</div>
+            <div class="detail"><b>{escape(text("impact", language))}</b>{escape(_impact_text(severity, language))}</div>
+            <div class="detail"><b>{escape(text("recommendation", language))}</b>{escape(recommendation or _unknown_text(language))}</div>
+            <div class="detail"><b>{escape(text("evidence", language))}</b>{escape(_shorten(evidence, 360) or _unknown_text(language))}</div>
+          </div>
+        </article>"""
+
+
+def _score_explanation(score: Any, grade: Any, language: str) -> str:
+    try:
+        numeric_score = int(score)
+    except (TypeError, ValueError):
+        numeric_score = 0
+    if language == "ko":
+        if numeric_score >= 90:
+            posture = "전반적인 보안 설정이 양호한 상태입니다."
+        elif numeric_score >= 70:
+            posture = "기본 보안 수준은 확보되어 있지만 일부 개선이 필요합니다."
+        elif numeric_score >= 60:
+            posture = "주요 보안 설정 일부가 누락되어 우선 개선이 필요합니다."
+        else:
+            posture = "중요한 보안 위험이 남아 있어 빠른 개선이 필요합니다."
+        return f"보안 점수는 {numeric_score}점({grade} 등급)입니다. {posture}"
+    if numeric_score >= 90:
+        posture = "The overall security posture is strong."
+    elif numeric_score >= 70:
+        posture = "The baseline is acceptable, but some improvements remain."
+    elif numeric_score >= 60:
+        posture = "Several important controls are missing and should be prioritized."
+    else:
+        posture = "Important security risks remain and should be addressed quickly."
+    return f"The security score is {numeric_score} ({grade}). {posture}"
+
+
+def _top_risk_sentence(top_risks: list[dict[str, Any]], language: str) -> str:
+    if not top_risks:
+        return text("no_top_risks", language)
+    names = ", ".join(str(item.get("title", "")) for item in top_risks[:3] if item.get("title"))
+    if language == "ko":
+        return f"가장 중요한 위험은 {names} 항목입니다."
+    return f"The most important risks are {names}."
+
+
+def _priority_action_sentence(top_risks: list[dict[str, Any]], language: str) -> str:
+    first = next((risk for risk in top_risks if risk.get("recommendation")), None)
+    if not first:
+        return (
+            "탐지된 항목의 근거를 검토한 뒤 심각도가 높은 항목부터 개선하세요."
+            if language == "ko"
+            else "Review the evidence and address the highest-severity findings first."
+        )
+    if language == "ko":
+        return f"우선 조치: {first.get('recommendation')}"
+    return f"Priority action: {first.get('recommendation')}"
+
+
+def _impact_text(severity: str, language: str) -> str:
+    if language == "ko":
+        return {
+            "critical": "즉시 악용될 경우 서비스와 데이터에 중대한 영향이 발생할 수 있습니다.",
+            "high": "공격 완화 기능이 부족해 실제 공격 위험을 높일 수 있습니다.",
+            "medium": "보안 방어층이 약해져 다른 취약점과 결합될 수 있습니다.",
+            "low": "직접 위험은 낮지만 보안 기준 강화를 위해 개선이 권장됩니다.",
+            "informational": "현재 상태를 이해하기 위한 참고 정보입니다.",
+        }.get(severity, "Scanner 결과만으로는 확인할 수 없습니다.")
+    return {
+        "critical": "Exploitation could cause major service or data impact.",
+        "high": "Missing controls can materially increase attack risk.",
+        "medium": "The defense layer is weaker and may combine with other issues.",
+        "low": "Direct risk is lower, but hardening is recommended.",
+        "informational": "This is contextual information for review.",
+    }.get(severity, "The scanner results are insufficient to confirm this.")
+
+
+def _unknown_text(language: str) -> str:
+    return (
+        "Scanner 결과만으로는 확인할 수 없습니다."
+        if language == "ko"
+        else "The scanner results are insufficient to confirm this."
+    )
+
+
+def _category_section(title: str, findings: list[dict[str, Any]], categories: set[str], language: str) -> str:
     scoped = [finding for finding in findings if finding.get("category") in categories]
     if not scoped:
-        rows = """
+        rows = f"""
         <tr>
-          <td colspan="5">No findings available for this section.</td>
+          <td colspan="5">{escape(text("no_findings", language))}</td>
         </tr>"""
     else:
         rows = "\n".join(
@@ -301,14 +447,14 @@ def _category_section(title: str, findings: list[dict[str, Any]], categories: se
     return f"""
     <section class="section">
       <h2>{escape(title)}</h2>
-      <table>
-        <thead><tr><th>Status</th><th>Severity</th><th>OWASP</th><th>Finding</th><th>Evidence</th></tr></thead>
+      <table class="compact-table">
+        <thead><tr><th>{escape(text("status", language))}</th><th>{escape(text("severity", language))}</th><th>{escape(text("owasp", language))}</th><th>{escape(text("finding", language))}</th><th>{escape(text("evidence", language))}</th></tr></thead>
         <tbody>{rows}</tbody>
       </table>
     </section>"""
 
 
-def render_findings_sections(findings: list[dict[str, Any]]) -> str:
+def render_findings_sections(findings: list[dict[str, Any]], language: str = "en") -> str:
     if not findings:
         return ""
     by_category = _count_by(findings, "category")
@@ -323,10 +469,10 @@ def render_findings_sections(findings: list[dict[str, Any]]) -> str:
     )
     return f"""
     <section class="section">
-      <h2>Findings by Category and OWASP</h2>
+      <h2>{escape(text("finding_sections", language))}</h2>
       <div class="grid">{category_cards}</div>
-      <table>
-        <thead><tr><th>OWASP Top 10 Category</th><th>Findings</th></tr></thead>
+      <table class="compact-table">
+        <thead><tr><th>{escape(text("owasp", language))}</th><th>{escape(text("findings", language))}</th></tr></thead>
         <tbody>{owasp_rows}</tbody>
       </table>
     </section>"""
@@ -352,10 +498,9 @@ def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
             if language == "en"
             else "AI 리포트를 생성할 수 없습니다. rule-based JSON/HTML 리포트는 정상 생성되었습니다."
         )
-        body = (
-            f"<p>{escape(fallback)}</p>"
-            f'<p class="subtle">{escape(str(error))}</p>'
-        )
+        if language == "ko":
+            fallback = "AI 리포트를 생성할 수 없습니다. rule-based JSON/HTML 리포트는 정상적으로 생성되었습니다."
+        body = f"<p>{escape(fallback)}</p>"
         status = f"Model: {escape(str(ai_report.get('model', '')))} | Fallback"
     section_title = AI_REPORT_TITLE.get(language, AI_REPORT_TITLE["ko"])
     return f"""
@@ -368,6 +513,10 @@ def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
 
 
 def _render_ai_text(content: str, language: str = "en") -> str:
+    structured = _render_ai_json(content, language)
+    if structured:
+        return structured
+
     lines = content.replace("\r\n", "\n").split("\n")
     rendered: list[str] = []
     paragraph: list[str] = []
@@ -417,7 +566,35 @@ def _render_ai_text(content: str, language: str = "en") -> str:
 
     flush_paragraph()
     flush_list()
-    return "\n".join(rendered) if rendered else "<p>No AI content returned.</p>"
+    fallback = "AI 내용이 반환되지 않았습니다." if language == "ko" else "No AI content returned."
+    return "\n".join(rendered) if rendered else f"<p>{escape(fallback)}</p>"
+
+
+def _render_ai_json(content: str, language: str) -> str:
+    try:
+        parsed = json.loads(content)
+    except json.JSONDecodeError:
+        return ""
+    if not isinstance(parsed, dict):
+        return ""
+    titles = {
+        "executive_summary": text("executive_summary", language),
+        "risk_explanation": text("risk_explanation", language),
+        "priority_actions": text("priority_actions", language),
+        "limitations": text("limitations", language),
+    }
+    parts: list[str] = []
+    for key, title in titles.items():
+        value = parsed.get(key)
+        parts.append(f"<h3>{escape(title)}</h3>")
+        if isinstance(value, list):
+            items = "".join(f"<li>{escape(str(item))}</li>" for item in value)
+            parts.append(f"<ul>{items}</ul>" if items else f"<p>{escape(_unknown_text(language))}</p>")
+        elif value:
+            parts.append(f"<p>{escape(str(value))}</p>")
+        else:
+            parts.append(f"<p>{escape(_unknown_text(language))}</p>")
+    return "\n".join(parts)
 
 
 def _markdown_heading(line: str, language: str) -> str | None:
