@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import re
 from html import escape
 from pathlib import Path
 from typing import Any
 
-from websecscope.i18n import normalize_language, severity_label, text
+from websecscope.i18n import localize_finding, normalize_language, severity_label, text
+from websecscope.models import summarize_findings
 from websecscope.reporter.llm_report_generator import LLMReportRequest, generate_llm_report
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
@@ -13,6 +15,18 @@ AI_REPORT_NOTICE = (
     "Findings were detected by the rule-based engine. "
     "The LLM only summarized and explained the results."
 )
+AI_REPORT_NOTICE_KO = (
+    "Findings는 rule-based engine이 탐지했습니다. "
+    "LLM은 결과를 요약하고 설명만 합니다."
+)
+AI_REPORT_TITLE = {"ko": "AI 리포트", "en": "AI Report"}
+AI_HEADING_TRANSLATIONS = {
+    "ko": {
+        "Executive Summary": "요약",
+        "Risk Analysis": "위험 분석",
+        "Priority Recommendations": "우선 개선 권고",
+    }
+}
 
 
 def write_html_report(
@@ -23,8 +37,12 @@ def write_html_report(
     output = ensure_parent(output_path)
     lang = normalize_language(language or result.get("language"))
     result["language"] = lang
-    findings = result.get("all_findings", result.get("findings", []))
-    summary = result.get("findings_summary", {})
+    findings = _localized_findings(result.get("all_findings", result.get("findings", [])), lang)
+    result["all_findings"] = findings
+    result["findings"] = findings
+    summary = summarize_findings(findings)
+    result["findings_summary"] = summary
+    result["summary"] = summary
     rows = "\n".join(_finding_row(finding) for finding in findings)
     executive_section = _executive_section(result, summary)
     severity_section = _severity_section(summary)
@@ -134,14 +152,14 @@ def write_html_report(
     <table>
       <thead>
         <tr>
-          <th>Status</th>
-          <th>Severity</th>
-          <th>Category</th>
+          <th>{escape(text("status", lang))}</th>
+          <th>{escape(text("severity", lang))}</th>
+          <th>{escape(text("category", lang))}</th>
           <th>OWASP</th>
-          <th>Finding</th>
-          <th>Interpretation</th>
-          <th>Evidence</th>
-          <th>Recommendation</th>
+          <th>{escape(text("finding", lang))}</th>
+          <th>{escape(text("interpretation", lang))}</th>
+          <th>{escape(text("evidence", lang))}</th>
+          <th>{escape(text("recommendation", lang))}</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>
@@ -176,6 +194,10 @@ def render_score_gauge(result: dict[str, Any]) -> str:
     score = escape(str(result.get("score", 0)))
     label = escape(str(result.get("score", "N/A")))
     return f'<div class="gauge" style="--score: {score}"><div class="gauge-inner">{label}</div></div>'
+
+
+def _localized_findings(findings: list[dict[str, Any]], language: str) -> list[dict[str, Any]]:
+    return [localize_finding(dict(finding), language) for finding in findings]
 
 
 def _finding_row(finding: dict[str, Any]) -> str:
@@ -319,14 +341,9 @@ def _count_by(findings: list[dict[str, Any]], key: str) -> dict[str, int]:
 
 
 def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
-    notice_text = AI_REPORT_NOTICE
-    if language != "en":
-        notice_text = (
-            f"{AI_REPORT_NOTICE} 탐지는 rule-based engine이 수행했으며, "
-            "LLM은 결과를 요약하고 설명만 합니다."
-        )
+    notice_text = AI_REPORT_NOTICE if language == "en" else AI_REPORT_NOTICE_KO
     if ai_report.get("content"):
-        body = _render_ai_text(str(ai_report.get("content", "")))
+        body = _render_ai_text(str(ai_report.get("content", "")), language)
         status = f"Model: {escape(str(ai_report.get('model', '')))}"
     else:
         error = ai_report.get("error") or "Ollama is not configured or did not return content."
@@ -340,27 +357,84 @@ def render_ai_report_section(ai_report: dict[str, Any], language: str) -> str:
             f'<p class="subtle">{escape(str(error))}</p>'
         )
         status = f"Model: {escape(str(ai_report.get('model', '')))} | Fallback"
+    section_title = AI_REPORT_TITLE.get(language, AI_REPORT_TITLE["ko"])
     return f"""
     <section class="section">
-      <h2>AI Report</h2>
+      <h2>{escape(section_title)}</h2>
       <p class="muted">{escape(notice_text)}</p>
       <p class="subtle">{status}</p>
       <div>{body}</div>
     </section>"""
 
 
-def _render_ai_text(content: str) -> str:
-    blocks = []
-    for raw_block in content.replace("\r\n", "\n").split("\n\n"):
-        block = raw_block.strip()
-        if not block:
+def _render_ai_text(content: str, language: str = "en") -> str:
+    lines = content.replace("\r\n", "\n").split("\n")
+    rendered: list[str] = []
+    paragraph: list[str] = []
+    list_items: list[str] = []
+    list_type: str | None = None
+
+    def flush_paragraph() -> None:
+        if paragraph:
+            rendered.append("<p>" + "<br>".join(escape(line) for line in paragraph) + "</p>")
+            paragraph.clear()
+
+    def flush_list() -> None:
+        nonlocal list_type
+        if list_items and list_type:
+            rendered.append(f"<{list_type}>" + "".join(list_items) + f"</{list_type}>")
+            list_items.clear()
+            list_type = None
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            flush_paragraph()
+            flush_list()
             continue
-        if block.startswith("#"):
-            heading = block.lstrip("#").strip()
-            blocks.append(f"<h3>{escape(heading)}</h3>")
-        else:
-            blocks.append(f"<p>{escape(block).replace(chr(10), '<br>')}</p>")
-    return "\n".join(blocks) if blocks else "<p>No AI content returned.</p>"
+
+        heading = _markdown_heading(line, language)
+        if heading:
+            flush_paragraph()
+            flush_list()
+            rendered.append(f"<h3>{escape(heading)}</h3>")
+            continue
+
+        unordered = re.match(r"^[-*]\s+(.+)$", line)
+        ordered = re.match(r"^\d+\.\s+(.+)$", line)
+        if unordered or ordered:
+            flush_paragraph()
+            current_type = "ul" if unordered else "ol"
+            if list_type and list_type != current_type:
+                flush_list()
+            list_type = current_type
+            item = unordered.group(1) if unordered else ordered.group(1)
+            list_items.append(f"<li>{escape(_normalize_ai_heading(item, language))}</li>")
+            continue
+
+        flush_list()
+        paragraph.append(_normalize_ai_heading(line, language))
+
+    flush_paragraph()
+    flush_list()
+    return "\n".join(rendered) if rendered else "<p>No AI content returned.</p>"
+
+
+def _markdown_heading(line: str, language: str) -> str | None:
+    hash_heading = re.match(r"^#{1,6}\s+(.+)$", line)
+    if hash_heading:
+        return _normalize_ai_heading(hash_heading.group(1), language)
+
+    bold_heading = re.match(r"^\*\*(.+?)\*\*:?\s*$", line)
+    if bold_heading:
+        return _normalize_ai_heading(bold_heading.group(1), language)
+    return None
+
+
+def _normalize_ai_heading(value: str, language: str) -> str:
+    text_value = value.strip().strip(":")
+    translations = AI_HEADING_TRANSLATIONS.get(language, {})
+    return translations.get(text_value, text_value)
 
 
 def _linux_section(linux_scan: dict[str, Any], linux_findings: list[dict[str, Any]]) -> str:

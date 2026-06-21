@@ -17,6 +17,12 @@ DEFAULT_MODEL = OLLAMA_MODEL
 DEFAULT_OLLAMA_ENDPOINT = OLLAMA_URL
 REQUEST_TIMEOUT_SECONDS = OLLAMA_TIMEOUT
 DEFAULT_TEMPERATURE = OLLAMA_TEMPERATURE
+KOREAN_SECTION_TITLES = ("요약", "위험 분석", "우선 개선 권고")
+ENGLISH_SECTION_TITLES = (
+    "Executive Summary",
+    "Risk Analysis",
+    "Priority Recommendations",
+)
 
 
 class LLMClient(Protocol):
@@ -137,17 +143,20 @@ def build_success_report(
 
 
 def _korean_prompt(payload: str) -> str:
+    section_titles = ", ".join(KOREAN_SECTION_TITLES)
     return f"""당신은 보안 취약점 탐지기가 아니라 보안 리포트 작성자입니다.
 
 규칙:
 - 아래 rule-based JSON만 근거로 사용하세요.
 - 새로운 취약점, severity, CVE, endpoint, evidence를 만들지 마세요.
-- 취약점 탐지는 rule-based engine이 이미 수행했습니다.
+- 취약점 탐지는 이미 rule-based engine이 수행했습니다.
 - evidence와 interpretation을 구분해서 설명하세요.
 - 근거가 불충분하면 불충분하다고 말하세요.
-- 출력은 한국어로 작성하세요.
-- 반드시 다음 세 섹션만 작성하세요: Executive Summary, Risk Analysis, Priority Recommendations.
-- 간결한 문단과 번호 목록을 사용하세요.
+- 출력은 한국어로만 작성하세요. 영어 문장으로 답변하지 마세요.
+- 섹션 제목도 한국어로만 작성하세요.
+- 반드시 다음 세 섹션만 작성하세요: {section_titles}.
+- Executive Summary, Risk Analysis, Priority Recommendations 같은 영어 섹션명을 출력하지 마세요.
+- 간결한 문단과 번호 목록 또는 bullet 목록을 사용하세요.
 
 Rule-based JSON:
 {payload}
@@ -155,6 +164,7 @@ Rule-based JSON:
 
 
 def _english_prompt(payload: str) -> str:
+    section_titles = ", ".join(ENGLISH_SECTION_TITLES)
     return f"""You are a security report writer, not a vulnerability scanner.
 
 Rules:
@@ -164,7 +174,7 @@ Rules:
 - Keep evidence and interpretation separate.
 - If evidence is inconclusive, say it is inconclusive.
 - Write in English.
-- Produce only these sections: Executive Summary, Risk Analysis, Priority Recommendations.
+- Produce only these sections: {section_titles}.
 - Use concise paragraphs and numbered lists.
 
 Rule-based JSON:
