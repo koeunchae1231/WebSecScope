@@ -1,26 +1,25 @@
 # WebSecScope (WSS)
 
-WebSecScope는 Web Application, Linux host, Docker 환경,       
-service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한     
-방어적 rule-based 보안 진단 CLI.
+WebSecScope는 Web Application, Linux host, Docker 환경, service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한 방어형 rule-based 보안 진단 CLI.
 
-v2.1 이후의 Ollama/Qwen2.5 AI Report는 선택 기능.      
-LLM은 취약점 탐지를 수행하지 않으며, finding은 scanner/analyzer 기반 rule-based pipeline에서만 생성.     
-LLM은 이미 생성된 rule-based JSON을 요약하고 설명하는 역할.
+v2.2 기준 AI Report는 선택 기능. LLM은 취약점 탐지기나 보안 의사결정자가 아니라 Report Formatter. Finding, severity, evidence, recommendation은 scanner/analyzer와 score calculator가 생성한 rule-based 결과만 근거.
 
-영문 문서는 [README_EN.md](README_EN.md)에 별도 제공.
+AI Report Formatter는 scanner/analyzer가 생성한 rule-based JSON 중 허용된 field만 입력으로 사용. raw HTTP response, debug log, internal exception text, console output은 AI 입력에서 제외. AI 출력은 JSON schema 중심 prompt, validation, sanitizing을 거친 뒤 HTML에 렌더링. 모델이 schema를 지키지 않거나 freeform 응답을 반환하는 경우 scanner-derived fallback text 사용.
+
+영문 문서: [README_EN.md](README_EN.md)
 
 ## 프로젝트 소개
 
-WebSecScope의 목표는 반복적인 보안 점검 결과를 일관된 JSON/HTML report로 남기는 것.
+WebSecScope의 목표는 반복 가능한 보안 점검 결과를 읽기 쉬운 JSON/HTML report로 정리하는 것.
 
 주요 설계 방향:
 
-- 공격 도구가 아닌 방어적 진단 도구
+- 공격 도구가 아닌 방어형 진단 도구
 - exploit 실행 없는 read-only 중심 점검
 - scanner와 analyzer가 만든 evidence 기반 finding
 - score, OWASP, recommendation, recheck 결과를 포함한 report 중심 구조
-- LLM이 탐지하지 않고 결과 설명만 담당하는 선택형 AI Report 구조
+- LLM이 탐지하지 않고 scanner/analyzer 결과를 설명하는 선택형 AI Report Formatter 구조
+- AI 출력 validation, Markdown/internal text sanitizing, scanner-derived fallback 기반 신뢰성 보강
 
 ## 주요 기능
 
@@ -38,7 +37,12 @@ WebSecScope의 목표는 반복적인 보안 점검 결과를 일관된 JSON/HTM
 - Korean/English report 지원
 - JSON/HTML report 생성
 - Before/After recheck 비교
-- Optional Ollama AI Report
+- Optional Ollama AI Report Formatter
+- AI output validation
+- Markdown/internal text sanitizing
+- Scanner-derived fallback report
+- Improved Korean HTML report readability
+- Top-risk detail cards
 
 ## Quick Start
 
@@ -68,7 +72,7 @@ recheck 비교:
 python main.py recheck --before reports/before.json --after reports/result.json --output reports/recheck.json
 ```
 
-Ollama 기반 Optional AI Report:
+Ollama 기반 Optional AI Report Formatter:
 
 ```bash
 ollama pull qwen2.5:7b
@@ -83,8 +87,8 @@ python main.py report --input reports/result.json --output reports/result.html
 - Python 3.10 이상
 - Docker check 사용 시 Docker CLI 접근 권한
 - Linux check 사용 시 Linux runtime
-- CVE lookup 품질 향상을 위한 선택적 `NVD_API_KEY`
-- AI Report 사용 시 Ollama 및 `qwen2.5:7b`
+- CVE lookup rate limit 완화를 위한 선택형 `NVD_API_KEY`
+- AI Report Formatter 사용 시 Ollama 및 `qwen2.5:7b`
 
 설치:
 
@@ -149,14 +153,14 @@ JSON report 주요 field:
 
 HTML report 주요 section:
 
-- Security Score gauge
+- Security Score explanation
 - Executive Summary
 - Severity cards
-- Top Risks
-- Category and OWASP sections
+- Top Risk cards
+- Detailed Finding cards
+- Category/OWASP sections
 - Web / API/Auth / Service / CVE / Linux / Docker sections
-- All Findings table
-- Optional AI Report section
+- Optional AI Report Formatter section
 
 ## Sample Reports
 
@@ -215,10 +219,20 @@ matching sample JSON:
 
 - Ollama 설정값의 `websecscope/config/settings.py` 분리
 - Ollama endpoint, model, timeout, temperature 환경변수 override 지원
-- HTTP status, score, OWASP, i18n, LLM fallback 대상 pytest 추가
-- 유지보수성을 위한 README, docs, CodeStructure 정리
+- AI Report Formatter reliability improvement
+- JSON schema-based AI output validation
+- Markdown/internal message sanitizing
+- AI output invalid 시 scanner-derived fallback text 사용
+- Korean localization cleanup
+- HTML report readability redesign
+- Security Score explanation 및 Executive Summary 개선
+- Top-risk detail cards 및 Detailed Finding cards 추가
+- Top-risk detail field support
+- HTTP status, score, OWASP, i18n, AI validation/fallback/sanitizing 관련 pytest 업데이트
+- py_compile 통과
+- pytest 20 passed
 
-## Ollama AI Report
+## Ollama AI Report Formatter
 
 Ollama 설치 및 실행:
 
@@ -234,13 +248,22 @@ python main.py scan --target https://example.com --lang ko --output reports/resu
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-HTML report 마지막에 `AI Report` section 추가. 해당 section에는 다음 안내문 포함:
+HTML report 마지막에 Optional AI Report Formatter section 추가. 해당 section의 안내문:
 
 ```text
 Findings were detected by the rule-based engine. The LLM only summarized and explained the results.
 ```
 
-Ollama가 실행 중이 아니거나 요청이 실패해도 JSON/HTML report 생성은 정상 진행. AI section에는 fallback message 표시.
+AI Report Formatter 안전장치:
+
+- LLM은 취약점 탐지자가 아닌 report formatter
+- scanner/analyzer가 생성한 rule-based JSON 중 허용 field만 AI 입력으로 전달
+- raw HTTP response, debug log, internal exception text 제외
+- AI prompt는 JSON formatter schema 중심
+- AI output validation 및 sanitizing 적용
+- Markdown marker, HTML, 내부 오류 메시지 노출 방지
+- schema 불일치 또는 freeform 응답 시 scanner-derived fallback text 사용
+- Ollama 실패 시에도 rule-based JSON/HTML report 생성 유지
 
 ### AI Report 설정
 
@@ -278,7 +301,7 @@ python main.py report --input reports/result.json --output reports/result.html
 
 ## 프로젝트 구조
 
-상세 code flow와 module 역할은 별도 문서로 분리:
+상세 code flow와 module 역할 문서:
 
 - [docs/architecture/CodeStructure.md](docs/architecture/CodeStructure.md)
 
@@ -295,7 +318,8 @@ pytest
 - 외부 network 의존 없음
 - 실제 Ollama process 의존 없음
 - LLM success/fallback은 monkeypatch 기반 검증
-- HTTP status interpretation, score, OWASP, i18n, LLM report generator 대상 테스트
+- HTTP status interpretation, score, OWASP, i18n, AI report validation/fallback/sanitizing 관련 테스트
+- 현재 기준 pytest 20 passed
 
 ## Roadmap
 
@@ -304,7 +328,7 @@ pytest
 - `v1.0.0`: rule-based MVP
 - `v2.0.0`: bilingual report, OWASP classification, HTTP status interpretation, HTML UI 개선
 - `v2.1.0`: optional Ollama/Qwen2.5 AI Report
-- `v2.2.0`: settings separation, tests, docs, release readiness cleanup
+- `v2.2.0`: AI Report Formatter reliability, output validation/sanitizing, scanner-derived fallback, Korean localization cleanup, HTML readability redesign
 
 향후 확장 후보:
 
