@@ -208,3 +208,14 @@ Score delta: +37
 ![VitaCore after score 97](./images/recheck-result.png)
 
 WebSecScope 재진단 결과, VitaCore의 Security Score는 60점(D등급)에서 97점(A등급)으로 37점 향상!
+
+## Result
+
+WebSecScope를 실제 서비스에 적용하여 보안 개선을 수행한 결과,
+
+- Security Score : **60 → 97**
+- Grade : **D → A**
+- Score Delta : **+37**
+
+주요 HTTP 보안 헤더가 정상적으로 적용되었으며,
+Scanner와 Recheck 기능을 통해 개선 효과를 정량적으로 검증할 수 있었음.
