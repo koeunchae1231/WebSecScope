@@ -1,8 +1,12 @@
 # WebSecScope 코드 구조
 
-이 문서는 WebSecScope의 코드 구조를 공부하기 위한 안내 문서입니다. 코드 한 줄씩 설명하기보다, 전체 흐름과 각 모듈이 왜 나뉘어 있는지 이해하는 데 목적이 있습니다.
+전체 흐름과 각 모듈이 왜 나뉘어 있는지 이해하는 목적.
 
-WebSecScope는 rule-based 보안 진단 도구입니다. Scanner와 Analyzer가 finding을 만들고, Reporter가 결과를 JSON/HTML로 출력합니다. LLM과 Ollama는 탐지기가 아니라 이미 만들어진 rule-based 결과를 요약하고 설명하는 선택 기능입니다.
+WebSecScope는 rule-based 보안 진단 도구.  
+Scanner와 Analyzer가 finding을 만들고,   
+Reporter가 결과를 JSON/HTML로 출력.   
+LLM과 Ollama는 이미 만들어진 rule-based 결과를 요약하고 설명하는 선택 기능.   
+(탐지XXX)
 
 ## 1. 전체 실행 흐름
 
@@ -22,53 +26,54 @@ reporter/*
 
 ### `main.py`
 
-- 왜 존재하는가: Python 실행 진입점을 단순하게 유지하기 위한 파일입니다.
-- 입력: 사용자가 입력한 command line.
-- 출력: 직접 결과를 만들지 않고 `cli.py`로 실행 흐름을 넘깁니다.
-- 다음 단계로 전달하는 것: `websecscope.cli.main()` 호출.
+- 왜 존재하는가: Python 실행 진입점을 단순하게 유지하기 위한 파일!  
+- 입력: 사용자가 입력한 command line.  
+- 출력: 직접 결과를 만들지 않고 `cli.py`로 실행 흐름을 넘깁니다.  
+- 다음 단계로 전달하는 것: `websecscope.cli.main()` 호출.  
 
 ### `cli.py`
 
-- 왜 존재하는가: 사용자의 CLI 입력을 해석하고 어떤 작업을 실행할지 결정하기 위한 계층입니다.
-- 입력: `scan`, `report`, `recheck` 명령과 option.
+- 왜 존재하는가: 사용자의 CLI 입력을 해석하고 어떤 작업을 실행할지 결정하기 위한 계층.  
+- 입력: `scan`, `report`, `recheck` 명령과 option.  
 - 출력: scan 결과 JSON 저장, HTML report 생성, recheck 결과 저장.
 - 다음 단계로 전달하는 것: target URL, output path, language, skip option 등.
 
 ### `scanner/orchestrator.py`
 
-- 왜 존재하는가: 여러 Scanner와 Analyzer를 순서대로 연결하는 중앙 실행 흐름입니다.
+- 왜 존재하는가: 여러 Scanner와 Analyzer를 순서대로 연결하는 중앙 실행 흐름
 - 입력: target URL과 CLI option.
 - 출력: `ScanResult`.
 - 다음 단계로 전달하는 것: Scanner가 수집한 raw evidence와 Analyzer가 만든 finding 목록.
 
 ### `scanner/*`
 
-- 왜 존재하는가: 외부 대상이나 로컬 환경에서 관찰 가능한 evidence를 수집하기 위한 계층입니다.
+- 왜 존재하는가: 외부 대상이나 로컬 환경에서 관찰 가능한 evidence를 수집하기 위한 계층.
 - 입력: target URL, 로컬 Linux/Docker 환경, network response 등.
 - 출력: HTTP status, header, open port, Docker metadata, service/version 같은 관찰 데이터.
 - 다음 단계로 전달하는 것: Analyzer가 해석할 수 있는 구조화된 evidence.
 
 ### `analyzer/*`
 
-- 왜 존재하는가: Scanner가 수집한 evidence를 보안 finding으로 해석하기 위한 계층입니다.
+- 왜 존재하는가: Scanner가 수집한 evidence를 보안 finding으로 해석하기 위한 계층.
 - 입력: Scanner의 관찰 데이터.
 - 출력: `Finding` 객체 목록.
 - 다음 단계로 전달하는 것: status, risk, evidence, recommendation, metadata가 포함된 finding.
 
 ### `reporter/*`
 
-- 왜 존재하는가: 분석 결과를 사람이 읽거나 도구가 소비할 수 있는 파일로 만들기 위한 계층입니다.
+- 왜 존재하는가: 분석 결과를 사람이 읽거나 도구가 소비할 수 있는 파일로 만들기 위한 계층!
 - 입력: `ScanResult` 또는 scan result JSON.
 - 출력: JSON Report, HTML Report, Optional AI Report section.
 - 다음 단계로 전달하는 것: 파일 시스템에 저장되는 report artifact.
 
-이 구조의 핵심은 책임 분리입니다. Scanner는 관찰만 하고, Analyzer는 해석하고, Reporter는 표현합니다. 이렇게 나누면 새로운 검사 항목이나 새로운 report 형식을 추가할 때 기존 흐름을 크게 흔들지 않아도 됩니다.
+구조의 핵심: 책임 분리
+Scanner는 관찰만 하고, Analyzer는 해석하고, Reporter는 표현
 
 ---
 
 ## 2. main.py
 
-`main.py`는 프로젝트의 가장 작은 entry point입니다.
+`main.py`는 프로젝트의 가장 작은 entry point
 
 역할:
 
@@ -78,9 +83,9 @@ reporter/*
 
 왜 필요한가:
 
-- 사용자가 `python main.py ...` 형태로 실행하기 쉽게 하기 위한 얇은 진입점입니다.
-- 실제 로직을 `websecscope/cli.py` 안에 두면 package 구조가 깔끔해집니다.
-- 테스트나 재사용 시 CLI 로직을 직접 import하기 쉬운 구조가 됩니다.
+- 사용자가 `python main.py ...` 형태로 실행하기 쉽게 하기 위한 얇은 진입점.
+- 실제 로직을 `websecscope/cli.py` 안에 두면 package 구조 클린.
+- 테스트나 재사용 시 CLI 로직을 직접 import하기 쉬운 구조.
 
 호출 대상:
 
@@ -91,17 +96,18 @@ if __name__ == "__main__":
     main()
 ```
 
-`main.py`는 문 역할만 합니다. 문을 열면 바로 `cli.py`로 들어가는 구조입니다.
+`main.py`는 문 역할. 
+문을 열면 바로 `cli.py`로 들어가는 구조.  
 
 ---
 
 ## 3. cli.py
 
-`cli.py`는 사용자의 명령을 읽고 알맞은 작업으로 분기하는 파일입니다.
+`cli.py`는 사용자의 명령을 읽고 알맞은 작업으로 분기하는 파일.  
 
 ### argparse 처리
 
-`argparse`는 CLI option을 정의하고 검증하는 Python 표준 라이브러리입니다.
+`argparse`는 CLI option을 정의하고 검증하는 Python 표준 라이브러리.
 
 WebSecScope의 주요 명령:
 
@@ -122,7 +128,7 @@ WebSecScope의 주요 명령:
 
 ### scan/report 명령 분기
 
-`scan` 명령은 `scanner/orchestrator.py`의 `run_scan()`으로 연결됩니다.
+`scan` 명령은 `scanner/orchestrator.py`의 `run_scan()`으로 연결.
 
 ```text
 CLI input
@@ -132,7 +138,7 @@ run_scan(...)
 write_json_report(...)
 ```
 
-`report` 명령은 기존 JSON 파일을 읽고 `html_reporter.py`로 전달합니다.
+`report` 명령은 기존 JSON 파일을 읽고 `html_reporter.py`로 전달.
 
 ```text
 JSON file
@@ -144,7 +150,8 @@ write_html_report(...)
 
 ### 사용자 입력 전달 방식
 
-CLI는 사용자의 입력을 보안 분석 로직으로 직접 해석하지 않습니다. 대신 option 값을 정리해서 다음 계층에 전달합니다.
+CLI는 사용자의 입력을 보안 분석 로직으로 직접 해석X   
+대신 option 값을 정리해서 다음 계층에 전달.
 
 예시:
 
@@ -153,17 +160,19 @@ CLI는 사용자의 입력을 보안 분석 로직으로 직접 해석하지 않
 - `--skip-cve`: CVE lookup 실행 여부
 - `--output`: report 저장 위치
 
-이렇게 CLI를 얇게 유지하면, scan logic과 report logic이 CLI에 묶이지 않습니다.
+얇은 CLI 유지: scan logic과 report logic이 CLI에 묶이지 않음.
 
 ---
 
 ## 4. scanner
 
-Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가 최종 취약점 판단을 하지 않는다는 것입니다. Scanner는 “무엇이 관찰되었는가”를 기록하고, Analyzer가 “그 의미가 무엇인가”를 판단합니다.
+Scanner는 evidence를 수집하는 계층.  
+중요한 점: Scanner가 최종 취약점 판단X    
+Scanner는 “무엇이 관찰되었는가”를 기록하고, Analyzer가 “그 의미가 무엇인가”를 판단.  
 
 ### `scanner/orchestrator.py`
 
-전체 scan 흐름을 조립하는 파일입니다.
+전체 scan 흐름을 조립하는 파일.  
 
 검사 대상:
 
@@ -179,7 +188,7 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 - `ScanResult`
 - 내부적으로는 여러 Scanner와 Analyzer가 만든 finding 목록
 
-이 파일은 “전체 scan을 어떤 순서로 실행할 것인가”를 보여주는 지도 역할입니다.
+이 파일은 “전체 scan을 어떤 순서로 실행할 것인가”를 보여주는 지도 역할.
 
 ### `scanner/web.py`
 
@@ -200,8 +209,8 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 
 설계 이유:
 
-- Web에서 관찰 가능한 HTTP response를 기반으로 가장 기본적인 보안 상태를 확인하기 위한 Scanner입니다.
-- `403` 같은 status를 바로 취약점으로 단정하지 않고, `protected but exists`처럼 evidence와 interpretation을 분리합니다.
+- Web에서 관찰 가능한 HTTP response를 기반으로 가장 기본적인 보안 상태를 확인하기 위한 Scanner.
+- `403` 같은 status를 바로 취약점으로 단정하지 않고, `protected but exists`처럼 evidence와 interpretation을 분리.
 
 ### `scanner/linux.py`와 `scanner/linux_scanner.py`
 
@@ -222,8 +231,8 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 
 설계 이유:
 
-- Linux 환경에서는 보안 진단에 필요한 정보가 `/proc`, `/etc`, system command 등에 흩어져 있습니다.
-- Scanner는 가능한 범위에서 read-only로 수집하고, 권한이 부족하거나 Linux가 아니면 skipped 상태로 남깁니다.
+- Linux 환경에서는 보안 진단에 필요한 정보가 `/proc`, `/etc`, system command 등에 흩어져 있음.
+- Scanner는 가능한 범위에서 read-only로 수집하고, 권한이 부족하거나 Linux가 아니면 skipped 상태로 남김.
 
 ### `scanner/docker_scanner.py`
 
@@ -247,8 +256,8 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 
 설계 이유:
 
-- Docker 보안은 container 실행 option에서 중요한 신호가 나옵니다.
-- 값 자체가 민감할 수 있는 secret은 수집하지 않고, secret처럼 보이는 key 이름만 evidence로 남기는 구조입니다.
+- Docker 보안은 container 실행 option에서 중요한 신호가 나옴.
+- 값 자체가 민감할 수 있는 secret은 수집하지 않고, secret처럼 보이는 key 이름만 evidence로 남기는 구조. 
 
 ### `scanner/service_detector.py`
 
@@ -264,8 +273,8 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 
 설계 이유:
 
-- CVE lookup이나 service exposure 판단을 하려면 먼저 어떤 service가 열려 있는지 알아야 합니다.
-- 이 단계는 정밀한 취약점 판단이 아니라 inventory 생성에 가깝습니다.
+- CVE lookup이나 service exposure 판단을 하려면 먼저 어떤 service가 열려 있는지 알기 위함.
+- 이 단계는 정밀한 취약점 판단이 아니라 inventory 생성에 가까움.
 
 ### `scanner/version_detector.py`
 
@@ -285,20 +294,20 @@ Scanner는 evidence를 수집하는 계층입니다. 중요한 점은 Scanner가
 
 설계 이유:
 
-- CVE/CVSS 분석은 product/version 정보가 있어야 가능성이 높아집니다.
-- version 정보가 없을 수 있으므로 confidence를 함께 두어 과신을 줄입니다.
+- CVE/CVSS 분석은 product/version 정보가 있어야 가능성이 향상.
+- version 정보가 없을 수 있으므로 confidence를 함께 두어 과신을 감소.
 
 ---
 
 ## 5. analyzer
 
-Analyzer는 Scanner가 수집한 evidence를 finding으로 바꾸는 계층입니다.
+Analyzer는 Scanner가 수집한 evidence를 finding으로 바꾸는 계층.  
 
-Scanner가 “무엇을 봤는가”를 말한다면, Analyzer는 “그래서 어떤 보안 의미가 있는가”를 정리합니다.
+Scanner가 “무엇을 봤는가”를 말한다면, Analyzer는 “그래서 어떤 보안 의미가 있는가”를 정리.
 
 ### Findings 생성 과정
 
-Finding은 WebSecScope의 핵심 결과 단위입니다.
+Finding은 WebSecScope의 핵심 결과 단위.
 
 주요 field:
 
@@ -311,7 +320,7 @@ Finding은 WebSecScope의 핵심 결과 단위입니다.
 - `recommendation`
 - `metadata`
 
-Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 status와 risk level을 부여합니다.
+Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 status와 risk level을 부여. 
 
 ### API/Auth Analyzer
 
@@ -331,8 +340,8 @@ Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 statu
 
 설계 이유:
 
-- API/Auth 영역은 단일 response만으로 확정 취약점을 판단하기 어렵습니다.
-- 그래서 “confirmed vulnerability”보다 “review signal” 중심으로 finding을 생성합니다.
+- API/Auth 영역은 단일 response만으로 확정 취약점을 판단하기 어려움.
+- 그래서 “confirmed vulnerability”보다 “review signal” 중심으로 finding을 생성.
 
 ### Linux Analyzer
 
@@ -350,7 +359,7 @@ Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 statu
 
 설계 이유:
 
-- Linux Scanner가 수집한 raw data를 운영 보안 관점의 finding으로 바꾸기 위한 계층입니다.
+- Linux Scanner가 수집한 raw data를 운영 보안 관점의 finding으로 바꾸기 위한 계층.
 
 ### Docker Analyzer
 
@@ -369,8 +378,8 @@ Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 statu
 
 설계 이유:
 
-- Docker metadata 자체는 단순 설정값입니다.
-- Analyzer가 이 설정값을 container hardening 관점으로 해석합니다.
+- Docker metadata 자체는 단순 설정값.
+- Analyzer가 이 설정값을 container hardening 관점으로 해석.
 
 ### CVE
 
@@ -387,14 +396,14 @@ Analyzer는 raw evidence를 보고 `PASS`, `WARNING`, `FAIL` 중 하나의 statu
 
 주의점:
 
-- CVE 결과는 “potentially related” 정보입니다.
+- CVE 결과는 “potentially related” 정보.
 - 실제 취약 여부는 배포 환경, vendor advisory, package patch 여부에 따라 수동 검증 필요.
 
 ### CVSS
 
-CVSS는 CVE item의 심각도를 정규화하는 기준입니다.
+CVSS는 CVE item의 심각도를 정규화하는 기준.
 
-WebSecScope는 CVSS score를 기준으로 risk를 대략 매핑합니다.
+WebSecScope는 CVSS score를 기준으로 risk를 대략 매핑.
 
 - `9.0+`: `CRITICAL`
 - `7.0+`: `HIGH`
@@ -404,7 +413,7 @@ WebSecScope는 CVSS score를 기준으로 risk를 대략 매핑합니다.
 
 설계 이유:
 
-- CVE마다 표현 방식이 다르기 때문에 report에서는 같은 기준으로 비교할 수 있어야 합니다.
+- CVE마다 표현 방식이 다르기 때문에 report에서는 같은 기준으로 비교하기 위함.
 
 ### OWASP
 
@@ -425,7 +434,7 @@ WebSecScope는 CVSS score를 기준으로 risk를 대략 매핑합니다.
 
 설계 이유:
 
-- report를 보는 사람이 finding을 OWASP 기준으로 빠르게 분류할 수 있게 하기 위한 구조입니다.
+- report를 보는 사람이 finding을 OWASP 기준으로 빠르게 분류할 수 있게 하기 위한 구조.
 
 ### Score 계산
 
@@ -443,14 +452,14 @@ WebSecScope는 CVSS score를 기준으로 risk를 대략 매핑합니다.
 
 설계 이유:
 
-- 많은 finding을 한 번에 볼 때 전체 상태를 빠르게 이해하기 위한 요약 지표입니다.
-- 단, score는 절대적인 보안 보증이 아니라 report를 읽기 위한 guide입니다.
+- 많은 finding을 한 번에 볼 때 전체 상태를 빠르게 이해하기 위한 요약 지표.
+- 단, score는 절대적인 보안 보증이 아니라 report를 읽기 위한 guide.
 
 ---
 
 ## 6. reporter
 
-Reporter는 분석 결과를 파일로 표현하는 계층입니다.
+Reporter는 분석 결과를 파일로 표현하는 계층.
 
 ### JSON Report
 
@@ -477,7 +486,7 @@ result.json
 
 설계 이유:
 
-- JSON을 중심 결과물로 두면 report 형식이 늘어나도 원본 결과를 다시 사용할 수 있습니다.
+- JSON을 중심 결과물로 두면 report 형식이 늘어나도 원본 결과 재사용 가능.
 
 ### HTML Report
 
@@ -510,8 +519,8 @@ HTML report section:
 
 설계 이유:
 
-- JSON은 도구가 읽기 좋고, HTML은 사람이 읽기 좋습니다.
-- HTML report는 portfolio나 공유용 결과물로 보기 쉽게 구성됩니다.
+- JSON은 도구가 읽기 좋고, HTML은 사람이 읽기 좋음
+- HTML report는 portfolio나 공유용 결과물로 보기 쉽게 구성.
 
 ### AI Report
 
@@ -536,9 +545,9 @@ HTML AI Report section
 
 설계 이유:
 
-- rule-based finding은 정확성과 재현성을 담당합니다.
-- LLM은 사람이 읽기 쉬운 executive summary와 priority recommendation을 보조합니다.
-- Ollama 실패 시에도 report 생성이 깨지지 않도록 graceful fallback을 둡니다.
+- rule-based finding은 정확성과 재현성을 담당.
+- LLM은 사람이 읽기 쉬운 executive summary와 priority recommendation을 보조.
+- Ollama 실패 시에도 report 생성이 깨지지 않도록 graceful fallback을 둠.
 
 ---
 
@@ -568,8 +577,8 @@ html_reporter.py
 
 설계 이유:
 
-- 설정값을 코드 안에 흩어 놓지 않기 위한 구조입니다.
-- 배포 환경마다 다른 Ollama 설정을 코드 수정 없이 바꿀 수 있습니다.
+- 설정값을 코드 안에 흩어 놓지 않기 위한 구조입.
+- 배포 환경마다 다른 Ollama 설정을 코드 수정 없이 바꿀 수 있음.
 
 ### `llm_report_generator.py`
 
@@ -582,10 +591,10 @@ html_reporter.py
 
 강조점:
 
-- LLM은 탐지를 하지 않습니다.
-- LLM은 새로운 finding을 만들지 않습니다.
-- LLM은 severity, CVE, endpoint, evidence를 invent하지 않아야 합니다.
-- LLM은 rule-based 결과를 요약하고 설명만 합니다.
+- LLM은 탐지XXX
+- LLM은 새로운 finding 생성XXX
+- LLM은 severity, CVE, endpoint, evidence를 invent XXX
+- LLM은 rule-based 결과를 요약하고 설명만!
 
 ### Ollama
 
@@ -601,7 +610,7 @@ html_reporter.py
 - timeout
 - API error
 
-이 경우 `html_reporter.py`는 fallback message를 AI Report section에 표시하고 일반 HTML report 생성을 계속합니다.
+이 경우 `html_reporter.py`는 fallback message를 AI Report section에 표시하고 일반 HTML report 생성을 계속.
 
 ### `html_reporter.py`
 
@@ -613,8 +622,8 @@ html_reporter.py
 
 설계 이유:
 
-- AI Report는 부가 기능입니다.
-- AI Report 실패가 전체 report 실패로 이어지면 안 됩니다.
+- AI Report는 부가 기능.
+- AI Report 실패가 전체 report 실패X
 
 ---
 
@@ -650,13 +659,13 @@ AI Report (Optional)
 
 ### Target
 
-사용자가 진단을 허가한 URL 또는 로컬 실행 환경입니다.
+사용자가 진단을 허가한 URL 또는 로컬 실행 환경.
 
-Target은 scan의 출발점입니다.
+Target은 scan의 출발점.
 
 ### Scanner
 
-Target에서 evidence를 수집합니다.
+Target에서 evidence를 수집.
 
 예시:
 
@@ -667,11 +676,11 @@ Target에서 evidence를 수집합니다.
 - Docker metadata
 - service banner
 
-Scanner는 가능한 한 판단보다 관찰에 집중합니다.
+Scanner는 가능한 한 판단보다 관찰에 집중.
 
 ### Analyzer
 
-Scanner가 모은 evidence를 finding으로 해석합니다.
+Scanner가 모은 evidence를 finding으로 해석.
 
 예시:
 
@@ -679,13 +688,11 @@ Scanner가 모은 evidence를 finding으로 해석합니다.
 - Docker privileged mode → high risk finding
 - service/version → CVE lookup candidate
 
-Analyzer는 evidence와 interpretation을 분리해 report 신뢰도를 높입니다.
+Analyzer는 evidence와 interpretation을 분리해 report 신뢰도 향상.
 
 ### Findings
 
-Finding은 WebSecScope report의 핵심 단위입니다.
-
-Finding에는 다음 정보가 들어갑니다.
+Finding은 WebSecScope report의 핵심 단위
 
 - 무엇을 검사했는가
 - 결과가 PASS/WARNING/FAIL 중 무엇인가
@@ -693,25 +700,7 @@ Finding에는 다음 정보가 들어갑니다.
 - 근거 evidence는 무엇인가
 - 어떤 조치를 권장하는가
 - OWASP category는 무엇인가
-
-### JSON
-
-JSON은 machine-readable 결과입니다.
-
-다른 도구, recheck, HTML report, AI Report가 재사용할 수 있는 원본 형태입니다.
-
-### HTML
-
-HTML은 사람이 읽기 좋은 report입니다.
-
-Security Score, summary, table, section 구성을 통해 finding을 빠르게 파악할 수 있습니다.
-
-### AI Report (Optional)
-
-AI Report는 JSON에 들어 있는 rule-based 결과를 사람이 이해하기 쉬운 문장으로 요약합니다.
-
-LLM은 탐지하지 않고, Scanner/Analyzer가 만든 결과만 설명합니다.
-
+- 
 ---
 
 ## 9. 프로젝트를 공부하는 추천 순서
