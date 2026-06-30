@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from websecscope.guide import recommendation_for
-from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
 
 RISKY_SERVICES = {
     "FTP": RISK_MEDIUM,
@@ -89,16 +89,7 @@ def _finding(
     evidence: str,
     recommendation: str,
 ) -> Finding:
-    return Finding(
-        check_id=check_id,
-        category=category,
-        title=title,
-        status=status,
-        risk=risk,
-        evidence=evidence,
-        recommendation=recommendation,
-        metadata={"description": description},
-    )
+    return build_finding(check_id, category, title, status, risk, evidence, recommendation, description=description)
 
 
 def _service_evidence(item: dict[str, Any]) -> str:

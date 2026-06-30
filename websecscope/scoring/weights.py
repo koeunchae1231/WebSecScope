@@ -1,0 +1,9 @@
+from websecscope.models import RISK_CRITICAL, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+
+RISK_WEIGHTS = {
+    RISK_INFO: 0,
+    RISK_LOW: 3,
+    RISK_MEDIUM: 8,
+    RISK_HIGH: 15,
+    RISK_CRITICAL: 25,
+}

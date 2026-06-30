@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from websecscope.guide import recommendation_for
-from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
 
 
 def analyze_linux_scan(linux_scan: dict[str, Any]) -> list[Finding]:
@@ -180,9 +180,17 @@ def _finding(
     recommendation: str,
     metadata: dict[str, Any] | None = None,
 ) -> Finding:
-    finding_metadata = metadata.copy() if metadata else {}
-    finding_metadata["description"] = description
-    return Finding(check_id, "linux", title, status, risk, evidence, recommendation, finding_metadata)
+    return build_finding(
+        check_id,
+        "linux",
+        title,
+        status,
+        risk,
+        evidence,
+        recommendation,
+        description=description,
+        metadata=metadata,
+    )
 
 
 def _is_yes(value: Any) -> bool:

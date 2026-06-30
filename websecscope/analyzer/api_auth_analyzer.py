@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from websecscope.guide import recommendation_for
-from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
 
 SUCCESS_STATUSES = {200, 201, 202, 204}
 PROTECTED_STATUSES = {401, 403}
@@ -326,9 +326,17 @@ def _finding(
     recommendation: str,
     metadata: dict[str, Any] | None = None,
 ) -> Finding:
-    finding_metadata = metadata.copy() if metadata else {}
-    finding_metadata["description"] = description
-    return Finding(check_id, category, title, status, risk, evidence, recommendation, finding_metadata)
+    return build_finding(
+        check_id,
+        category,
+        title,
+        status,
+        risk,
+        evidence,
+        recommendation,
+        description=description,
+        metadata=metadata,
+    )
 
 
 def _endpoint_evidence(endpoint: dict[str, Any]) -> str:

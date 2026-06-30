@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from websecscope.guide import recommendation_for
-from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_CRITICAL, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_CRITICAL, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
 
 NVD_API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 CACHE_PATH = Path(".websecscope_cache/cve_cache.json")
@@ -159,20 +159,20 @@ def build_cve_findings(lookup: dict[str, Any]) -> list[Finding]:
         risk = _risk_from_cvss(item.get("cvss_score"))
         confidence = item.get("confidence", "low")
         findings.append(
-            Finding(
-                check_id=f"CVE_{item.get('cve_id', 'UNKNOWN')}",
-                category="cve",
-                title=f"Potentially related CVE: {item.get('cve_id', 'unknown')}",
-                status=FAIL if confidence == "high" and risk in {RISK_HIGH, RISK_CRITICAL} else WARNING,
-                risk=risk,
-                evidence=(
+            build_finding(
+                f"CVE_{item.get('cve_id', 'UNKNOWN')}",
+                "cve",
+                f"Potentially related CVE: {item.get('cve_id', 'unknown')}",
+                FAIL if confidence == "high" and risk in {RISK_HIGH, RISK_CRITICAL} else WARNING,
+                risk,
+                (
                     f"{item.get('matched_product')} {item.get('matched_version')}; "
                     f"CVSS={item.get('cvss_score')} ({item.get('cvss_version')}); "
                     f"confidence={confidence}; {item.get('evidence')}"
                 ),
-                recommendation=recommendation_for("CVE_REVIEW"),
+                recommendation_for("CVE_REVIEW"),
+                description="NVD returned a potentially related CVE for the detected product/version. Confirm applicability before treating it as exploitable.",
                 metadata={
-                    "description": "NVD returned a potentially related CVE for the detected product/version. Confirm applicability before treating it as exploitable.",
                     "confidence": confidence,
                     "cvss_score": item.get("cvss_score"),
                     "cve": item,
@@ -311,16 +311,16 @@ def _english_description(descriptions: list[dict[str, Any]]) -> str:
 
 
 def _inventory_finding(candidates: list[dict[str, str]], evidence: str) -> Finding:
-    return Finding(
-        check_id="CVE_SERVICE_INVENTORY",
-        category="cve",
-        title="CVE/CVSS analysis structure",
-        status=PASS if candidates else WARNING,
-        risk=RISK_INFO,
-        evidence=evidence,
-        recommendation="Collect service banners or package inventories to enable CVE matching." if not candidates else "No action required.",
+    return build_finding(
+        "CVE_SERVICE_INVENTORY",
+        "cve",
+        "CVE/CVSS analysis structure",
+        PASS if candidates else WARNING,
+        RISK_INFO,
+        evidence,
+        "Collect service banners or package inventories to enable CVE matching." if not candidates else "No action required.",
+        description="CVE lookup is based on detected product/version evidence and remains advisory until manually verified.",
         metadata={
-            "description": "CVE lookup is based on detected product/version evidence and remains advisory until manually verified.",
             "services": candidates,
         },
     )

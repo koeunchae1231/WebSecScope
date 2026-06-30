@@ -8,17 +8,8 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from websecscope.guide import recommendation_for
 from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.rules.web import SECURITY_HEADERS, SENSITIVE_PATHS
 
-SECURITY_HEADERS = {
-    "strict-transport-security": ("Strict-Transport-Security", RISK_HIGH),
-    "content-security-policy": ("Content-Security-Policy", RISK_HIGH),
-    "x-content-type-options": ("X-Content-Type-Options", RISK_MEDIUM),
-    "x-frame-options": ("X-Frame-Options", RISK_MEDIUM),
-    "referrer-policy": ("Referrer-Policy", RISK_LOW),
-    "permissions-policy": ("Permissions-Policy", RISK_LOW),
-}
-
-SENSITIVE_PATHS = [".git/HEAD", ".env", "backup.zip", "admin", "phpinfo.php"]
 HTTP_TIMEOUT_SECONDS = 1
 socket.setdefaulttimeout(HTTP_TIMEOUT_SECONDS)
 

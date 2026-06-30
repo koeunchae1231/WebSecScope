@@ -22,6 +22,19 @@ RISK_CRITICAL = "CRITICAL"
 
 
 @dataclass
+class Evidence:
+    source: str
+    observed: str
+    context: dict[str, Any] = field(default_factory=dict)
+
+    def to_report_text(self) -> str:
+        if not self.context:
+            return f"{self.source}: {self.observed}"
+        context = "; ".join(f"{key}={value}" for key, value in sorted(self.context.items()))
+        return f"{self.source}: {self.observed}; {context}"
+
+
+@dataclass
 class Finding:
     check_id: str
     category: str
@@ -44,6 +57,27 @@ class Finding:
         payload["language"] = normalize_language(language)
         localize_finding(payload, language)
         return payload
+
+
+def build_finding(
+    check_id: str,
+    category: str,
+    title: str,
+    status: str,
+    risk: str,
+    evidence: str | Evidence,
+    recommendation: str,
+    description: str | None = None,
+    interpretation: str | None = None,
+    metadata: dict[str, Any] | None = None,
+) -> Finding:
+    finding_metadata = metadata.copy() if metadata else {}
+    if description is not None:
+        finding_metadata["description"] = description
+    if interpretation is not None:
+        finding_metadata["interpretation"] = interpretation
+    evidence_text = evidence.to_report_text() if isinstance(evidence, Evidence) else evidence
+    return Finding(check_id, category, title, status, risk, evidence_text, recommendation, finding_metadata)
 
 
 @dataclass

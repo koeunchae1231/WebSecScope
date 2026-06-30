@@ -5,7 +5,7 @@ from websecscope.analyzer.cve import analyze_cves
 from websecscope.analyzer.docker_analyzer import analyze_docker_scan
 from websecscope.analyzer.linux_analyzer import analyze_linux_scan
 from websecscope.analyzer.service_analyzer import analyze_services
-from websecscope.analyzer.score import calculate_score
+from websecscope.scoring import calculate_score
 from websecscope.models import ScanResult
 from websecscope.scanner.api_scanner import scan_api_endpoints
 from websecscope.scanner.auth_scanner import scan_auth_controls

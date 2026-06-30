@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from websecscope.guide import recommendation_for
-from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_CRITICAL, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM
+from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_CRITICAL, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
 
 RISKY_CAPABILITIES = {"SYS_ADMIN", "NET_ADMIN", "SYS_PTRACE", "SYS_MODULE", "DAC_READ_SEARCH"}
 SENSITIVE_HOST_PATHS = ("/", "/etc", "/var", "/home", "/root")
@@ -139,13 +139,4 @@ def _finding(
     evidence: str,
     recommendation: str,
 ) -> Finding:
-    return Finding(
-        check_id=check_id,
-        category="docker",
-        title=title,
-        status=status,
-        risk=risk,
-        evidence=evidence,
-        recommendation=recommendation,
-        metadata={"description": description},
-    )
+    return build_finding(check_id, "docker", title, status, risk, evidence, recommendation, description=description)

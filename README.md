@@ -1,25 +1,27 @@
 # WebSecScope (WSS)
 
-WebSecScope는 Web Application, Linux host, Docker 환경, service/version inventory, CVE/CVSS 검토, JSON/HTML report 생성을 위한 방어형 rule-based 보안 진단 CLI.
+WebSecScope는 Web Application, Linux host, Docker 환경, service/version inventory, CVE/CVSS 결과를 JSON/HTML report로 정리하는 방어적 rule-based 보안 진단 CLI.
 
-v2.2 기준 AI Report는 선택 기능. LLM은 취약점 탐지기나 보안 의사결정자가 아니라 Report Formatter. Finding, severity, evidence, recommendation은 scanner/analyzer와 score calculator가 생성한 rule-based 결과만 근거.
+핵심 구조는 `Scanner -> Analyzer -> Reporter -> Optional AI Formatter` 흐름. Scanner는 관측 가능한 Evidence 생성 담당, Analyzer는 Evidence 기반 판단 담당, Reporter는 출력 담당, LLM은 탐지자가 아닌 Report Formatter 역할.
 
-AI Report Formatter는 scanner/analyzer가 생성한 rule-based JSON 중 허용된 field만 입력으로 사용. raw HTTP response, debug log, internal exception text, console output은 AI 입력에서 제외. AI 출력은 JSON schema 중심 prompt, validation, sanitizing을 거친 뒤 HTML에 렌더링. 모델이 schema를 지키지 않거나 freeform 응답을 반환하는 경우 scanner-derived fallback text 사용.
+Rule-based Engine은 WebSecScope 결과의 Single Source of Truth. Finding, severity, evidence, recommendation, score는 scanner/analyzer/scoring 계층이 만든 결과 기준. LLM 결과는 rule-based 결과의 설명과 요약을 위한 선택 기능.
 
 영문 문서: [README_EN.md](README_EN.md)
 
 ## 프로젝트 소개
 
-WebSecScope의 목표는 반복 가능한 보안 점검 결과를 읽기 쉬운 JSON/HTML report로 정리하는 것.
+WebSecScope의 목표는 반복 가능한 보안 점검 결과를 사람이 읽기 쉬운 HTML report와 기계가 처리하기 쉬운 JSON report로 정리하는 구조.
 
 주요 설계 방향:
 
-- 공격 도구가 아닌 방어형 진단 도구
+- 공격 도구가 아닌 방어적 진단 도구
 - exploit 실행 없는 read-only 중심 점검
-- scanner와 analyzer가 만든 evidence 기반 finding
-- score, OWASP, recommendation, recheck 결과를 포함한 report 중심 구조
-- LLM이 탐지하지 않고 scanner/analyzer 결과를 설명하는 선택형 AI Report Formatter 구조
-- AI 출력 validation, Markdown/internal text sanitizing, scanner-derived fallback 기반 신뢰성 보강
+- Scanner가 생성한 Evidence 기반 판단
+- Analyzer가 생성한 Finding 기반 Score 계산
+- Reporter가 담당하는 JSON/HTML 출력
+- LLM이 탐지자가 아닌 Report Formatter로만 동작하는 구조
+- Rule-based 결과 우선 원칙
+- Validation, Audit Trail, Benchmark, DI 확장을 위한 내부 경계
 
 ## 주요 기능
 
@@ -33,16 +35,13 @@ WebSecScope의 목표는 반복 가능한 보안 점검 결과를 읽기 쉬운 
 - Service/version detection
 - NVD CVE/CVSS lookup
 - Security Score 및 grade 계산
-- OWASP Top 10 category 매핑
+- OWASP Top 10 category mapping
 - Korean/English report 지원
 - JSON/HTML report 생성
 - Before/After recheck 비교
 - Optional Ollama AI Report Formatter
-- AI output validation
-- Markdown/internal text sanitizing
+- AI output validation 및 sanitizing
 - Scanner-derived fallback report
-- Improved Korean HTML report readability
-- Top-risk detail cards
 
 ## Quick Start
 
@@ -52,10 +51,15 @@ WebSecScope의 목표는 반복 가능한 보안 점검 결과를 읽기 쉬운 
 pip install -r requirements.txt
 ```
 
-scan 실행 및 report 생성:
+scan 실행 및 JSON report 생성:
 
 ```bash
 python main.py scan --target https://example.com --output reports/result.json
+```
+
+HTML report 생성:
+
+```bash
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
@@ -72,7 +76,7 @@ recheck 비교:
 python main.py recheck --before reports/before.json --after reports/result.json --output reports/recheck.json
 ```
 
-Ollama 기반 Optional AI Report Formatter:
+Optional AI Report Formatter:
 
 ```bash
 ollama pull qwen2.5:7b
@@ -80,21 +84,94 @@ ollama serve
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-## 설치
+## 프로젝트 구조
 
-권장 환경:
-
-- Python 3.10 이상
-- Docker check 사용 시 Docker CLI 접근 권한
-- Linux check 사용 시 Linux runtime
-- CVE lookup rate limit 완화를 위한 선택형 `NVD_API_KEY`
-- AI Report Formatter 사용 시 Ollama 및 `qwen2.5:7b`
-
-설치:
-
-```bash
-pip install -r requirements.txt
+```text
+websecscope/
+    cli/
+        main.py
+        commands/
+            scan.py
+            report.py
+            recheck.py
+    scanner/
+    rules/
+    analyzer/
+    comparison/
+    scoring/
+    reporter/
+        html/
+        json/
+        ai/
+    models.py
+    config/
+    utils.py
 ```
+
+디렉터리 역할:
+
+- `cli/`: argparse 구성 및 command dispatch 책임
+- `cli/commands/`: scan, report, recheck command별 실행 책임
+- `scanner/`: target과 runtime에서 관측 가능한 Evidence 수집 책임
+- `rules/`: scanner가 참조하는 rule catalog와 rule metadata 기반
+- `analyzer/`: Evidence 기반 Finding 판단 책임
+- `comparison/`: before/after 결과 비교, delta, summary 책임
+- `scoring/`: rule-based Finding 기반 score, weight, grade 계산 책임
+- `reporter/`: 출력 계층 책임
+- `reporter/html/`: HTML report writer 경계
+- `reporter/json/`: JSON report writer 경계
+- `reporter/ai/`: LLM 기반 report formatter 경계
+- `models.py`: Evidence, Finding, ScanResult 등 공통 모델
+- `config/`: 환경설정과 환경변수 접근 경계
+- `utils.py`: 공통 파일 처리와 보조 함수
+
+## Architecture
+
+기본 실행 흐름:
+
+```text
+Scan
+    ↓
+Scanner
+    ↓
+Evidence 생성
+    ↓
+Analyzer
+    ↓
+Score 계산
+    ↓
+Reporter
+    ↓
+Optional AI Formatter
+    ↓
+HTML / JSON Report
+```
+
+역할과 책임:
+
+- Scanner: HTTP status, header, cookie, Linux/Docker local state, service/version signal 등 관측 가능한 Evidence 생성
+- Analyzer: Evidence를 PASS/WARNING/FAIL Finding으로 해석, severity와 recommendation 부여
+- Scoring: Analyzer가 만든 Finding 기반 score와 grade 계산
+- Reporter: ScanResult와 comparison 결과를 JSON/HTML artifact로 출력
+- AI Formatter: rule-based JSON 중 허용된 필드만 사용한 설명과 요약 생성
+- Config/Utils: 공통 설정과 보조 기능 제공
+
+의존성 방향:
+
+```text
+CLI
+  ↓
+Scanner / Analyzer / Comparison / Reporter
+  ↓
+Models / Config / Utils
+```
+
+금지 구조:
+
+- Reporter가 Scanner를 직접 호출하는 구조
+- Analyzer가 CLI를 참조하는 구조
+- LLM이 Finding, severity, evidence, CVE를 새로 생성하는 구조
+- Rule-based 결과보다 LLM 결과를 우선하는 구조
 
 ## 실행
 
@@ -162,18 +239,6 @@ HTML report 주요 section:
 - Web / API/Auth / Service / CVE / Linux / Docker sections
 - Optional AI Report Formatter section
 
-## Sample Reports
-
-검증 과정에서 생성한 sample report:
-
-- [Korean AI sample](docs/samples/sample_v2_ko_ai.html)
-- [English AI sample](docs/samples/sample_v2_en_ai.html)
-
-matching sample JSON:
-
-- `reports/sample_v2_ko.json`
-- `reports/sample_v2_en.json`
-
 ## 구현 상태
 
 ### v1.0
@@ -194,11 +259,6 @@ matching sample JSON:
 - localized severity label 및 report text 구조
 - finding별 `owasp_category` 추가
 - Sensitive path HTTP status 해석 개선
-  - `200`: exposed
-  - `401` / `403`: protected but exists
-  - `404`: not found
-  - `301` / `302`: redirected, `Location` 기록
-  - `500`: server error risk
 - `evidence`와 `interpretation` 분리
 - Security Score gauge, severity cards, Executive Summary cards, category/OWASP sections 기반 HTML UI 개선
 
@@ -207,12 +267,8 @@ matching sample JSON:
 - Optional Ollama AI Report integration
 - model: `qwen2.5:7b`
 - endpoint: `http://localhost:11434/api/generate`
-- AI output section:
-  - `Executive Summary`
-  - `Risk Analysis`
-  - `Priority Recommendations`
 - Ollama unavailable/failure 시 graceful fallback
-- LLM 입력은 rule-based scan JSON만 사용
+- LLM 입력을 rule-based scan JSON으로 제한하는 구조
 - LLM이 `all_findings`를 수정하지 않는 구조
 
 ### v2.2
@@ -227,9 +283,19 @@ matching sample JSON:
 - HTML report readability redesign
 - Security Score explanation 및 Executive Summary 개선
 - Top-risk detail cards 및 Detailed Finding cards 추가
-- Top-risk detail field support
-- HTTP status, score, OWASP, i18n, AI validation/fallback/sanitizing 관련 pytest 업데이트
-- py_compile 통과
+- pytest 20 passed
+
+### v2.3
+
+- Architecture Refactoring
+- CLI command separation
+- Comparison module separation
+- Scoring module separation
+- Common models introduction
+- Reporter boundary separation
+- Rule Engine foundation
+- Dependency cleanup
+- Backward compatibility maintained
 - pytest 20 passed
 
 ## Ollama AI Report Formatter
@@ -248,106 +314,52 @@ python main.py scan --target https://example.com --lang ko --output reports/resu
 python main.py report --input reports/result.json --output reports/result.html
 ```
 
-HTML report 마지막에 Optional AI Report Formatter section 추가. 해당 section의 안내문:
+HTML report 마지막의 Optional AI Report Formatter section. 해당 section 안내문:
 
 ```text
 Findings were detected by the rule-based engine. The LLM only summarized and explained the results.
 ```
 
-AI Report Formatter 안전장치:
+AI Report Formatter 안전 장치:
 
 - LLM은 취약점 탐지자가 아닌 report formatter
 - scanner/analyzer가 생성한 rule-based JSON 중 허용 field만 AI 입력으로 전달
 - raw HTTP response, debug log, internal exception text 제외
-- AI prompt는 JSON formatter schema 중심
-- AI output validation 및 sanitizing 적용
-- Markdown marker, HTML, 내부 오류 메시지 노출 방지
-- schema 불일치 또는 freeform 응답 시 scanner-derived fallback text 사용
-- Ollama 실패 시에도 rule-based JSON/HTML report 생성 유지
+- schema validation 및 sanitizing 적용
+- invalid/freeform response 시 scanner-derived fallback 사용
+- rule-based JSON/HTML report 생성 실패와 분리된 선택 기능
 
-### AI Report 설정
+## Sample Reports
 
-기본값:
+검증 과정에서 생성된 sample report:
 
-- `OLLAMA_URL`: `http://localhost:11434/api/generate`
-- `OLLAMA_MODEL`: `qwen2.5:7b`
-- `OLLAMA_TIMEOUT`: `60`
-- `OLLAMA_TEMPERATURE`: `0.2`
+- [Korean AI sample](docs/samples/sample_v2_ko_ai.html)
+- [English AI sample](docs/samples/sample_v2_en_ai.html)
 
-환경변수 override:
+matching sample JSON:
 
-Windows PowerShell:
-
-```powershell
-$env:WEBSECSCOPE_OLLAMA_MODEL = "qwen2.5:7b"
-$env:WEBSECSCOPE_OLLAMA_TIMEOUT = "90"
-python main.py report --input reports/result.json --output reports/result.html
-```
-
-Linux / macOS:
-
-```bash
-export WEBSECSCOPE_OLLAMA_MODEL=qwen2.5:7b
-export WEBSECSCOPE_OLLAMA_TIMEOUT=90
-python main.py report --input reports/result.json --output reports/result.html
-```
-
-지원 환경변수:
-
-- `WEBSECSCOPE_OLLAMA_URL`
-- `WEBSECSCOPE_OLLAMA_MODEL`
-- `WEBSECSCOPE_OLLAMA_TIMEOUT`
-- `WEBSECSCOPE_OLLAMA_TEMPERATURE`
-
-## 프로젝트 구조
-
-상세 code flow와 module 역할 문서:
-
-- [docs/architecture/CodeStructure.md](docs/architecture/CodeStructure.md)
-
-## 테스트
-
-pytest 실행:
-
-```bash
-pytest
-```
-
-테스트 특징:
-
-- 외부 network 의존 없음
-- 실제 Ollama process 의존 없음
-- LLM success/fallback은 monkeypatch 기반 검증
-- HTTP status interpretation, score, OWASP, i18n, AI report validation/fallback/sanitizing 관련 테스트
-- 현재 기준 pytest 20 passed
+- `reports/sample_v2_ko.json`
+- `reports/sample_v2_en.json`
 
 ## Roadmap
 
 완료:
 
-- `v1.0.0`: rule-based MVP
-- `v2.0.0`: bilingual report, OWASP classification, HTTP status interpretation, HTML UI 개선
-- `v2.1.0`: optional Ollama/Qwen2.5 AI Report
-- `v2.2.0`: AI Report Formatter reliability, output validation/sanitizing, scanner-derived fallback, Korean localization cleanup, HTML readability redesign
+- v2.3 Architecture Refactoring
+- CLI command separation
+- Comparison module separation
+- Scoring module separation
+- Reporter boundary separation
+- Rule Engine foundation
 
-향후 확장 후보:
+향후 계획:
 
-- configurable LLM provider
-- standalone AI narrative artifact
-- localized finding text coverage 확대
-- before/after comparison visualization 강화
-- CPE 기반 CVE matching 정확도 개선
-
-## Safety
-
-WebSecScope의 안전 원칙:
-
-- brute force 없음
-- denial-of-service testing 없음
-- exploit execution 없음
-- destructive filesystem 또는 container action 없음
-- Docker 및 Linux check는 read-only 중심
-- CVE match는 advisory 정보이며 수동 검증 필요
+- Validation Lab
+- Audit Trail
+- Before/After HTML Report
+- Security Improvement Timeline
+- DI(Data Integrity) support
+- LLM Provider expansion, 낮은 우선순위
 
 ## License
 
