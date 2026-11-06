@@ -1,0 +1,11 @@
+{
+  "policy_version": 1,
+  "target_origin": "http://127.0.0.1:8080/",
+  "resources": [{"path": "/api-docs", "visibility": "public"}],
+  "cookies": [{"name": "palette", "purpose": "preference", "javascript_access_required": true, "path": "/"}],
+  "header_requirements": [{
+    "scope": "origin",
+    "required_headers": ["Content-Security-Policy"],
+    "strength": {"Content-Security-Policy": "p2-restricted-script-object"}
+  }]
+}

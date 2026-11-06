@@ -6,6 +6,7 @@ from datetime import datetime
 from websecscope.i18n import DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, normalize_language
 from websecscope.reporter import write_json_report
 from websecscope.scanner import run_scan
+from websecscope.policy import load_policy
 
 
 def add_scan_parser(subparsers: argparse._SubParsersAction) -> None:
@@ -13,6 +14,7 @@ def add_scan_parser(subparsers: argparse._SubParsersAction) -> None:
     scan_parser.add_argument("--target", required=True, help="Authorized target URL, e.g. https://example.com")
     scan_parser.add_argument("--output", default=None, help="Output JSON path")
     scan_parser.add_argument("--lang", choices=sorted(SUPPORTED_LANGUAGES), default=DEFAULT_LANGUAGE, help="Report language: ko or en")
+    scan_parser.add_argument("--policy", default=None, help="Optional origin-bound JSON service policy")
     api_auth_group = scan_parser.add_mutually_exclusive_group()
     api_auth_group.add_argument("--api-auth", action="store_true", help="Include API/Auth analysis; enabled by default")
     api_auth_group.add_argument("--skip-api-auth", action="store_true", help="Skip API/Auth analysis")
@@ -32,6 +34,11 @@ def add_scan_parser(subparsers: argparse._SubParsersAction) -> None:
 
 
 def run_scan_command(args: argparse.Namespace) -> None:
+    try:
+        policy = load_policy(args.policy, args.target) if getattr(args, 'policy', None) else None
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    policy_args = {"policy": policy} if policy is not None else {}
     result = run_scan(
         args.target,
         language=normalize_language(args.lang),
@@ -40,6 +47,7 @@ def run_scan_command(args: argparse.Namespace) -> None:
         include_docker=not args.skip_docker,
         include_service_detect=not args.skip_service_detect,
         include_cve=not args.skip_cve,
+        **policy_args,
     )
     output_path = args.output or f"reports/result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     path = write_json_report(result, output_path, language=args.lang)

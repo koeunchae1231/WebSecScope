@@ -8,6 +8,7 @@ from uuid import uuid4
 from websecscope.guide.mappings import recommendation_for_finding
 from websecscope.i18n import DEFAULT_LANGUAGE, localize_finding, normalize_language
 from websecscope.owasp import owasp_category_for
+from websecscope.finding_state import dict_skip_reason, skip_reason
 
 
 PASS = "PASS"
@@ -50,6 +51,8 @@ class Finding:
         if not payload.get("recommendation"):
             payload["recommendation"] = recommendation_for_finding(self.check_id, self.category)
         payload["id"] = self.check_id
+        payload["skip_reason"] = skip_reason(self.check_id, self.metadata)
+        payload["skipped"] = payload["skip_reason"] is not None
         payload["severity"] = _severity_label(self.risk)
         payload["description"] = self.metadata.get("description", self.title)
         payload["interpretation"] = self.metadata.get("interpretation", payload["description"])
@@ -97,6 +100,7 @@ class ScanResult:
     service_detection: dict[str, Any] = field(default_factory=dict)
     version_detection: dict[str, Any] = field(default_factory=dict)
     cve_lookup: dict[str, Any] = field(default_factory=dict)
+    score_details: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self, language: str | None = None) -> dict[str, Any]:
         lang = normalize_language(language or self.language)
@@ -118,6 +122,7 @@ class ScanResult:
             "generated_at": self.generated_at,
             "target": self.target,
             "score": self.score,
+            "score_details": self.score_details,
             "grade": _grade_for_score(self.score),
             "summary": summarize_findings(findings),
             "findings_summary": findings_summary,
@@ -146,6 +151,7 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
     owasp_categories: dict[str, int] = {}
     effective_seen: set[tuple[str, str]] = set()
     top_risks = []
+    skipped_total = 0
     for finding in findings:
         by_status[finding.get("status", WARNING)] = by_status.get(finding.get("status", WARNING), 0) + 1
         category = finding.get("category", "unknown")
@@ -153,6 +159,7 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
         owasp_category = finding.get("owasp_category", "Unmapped")
         owasp_categories[owasp_category] = owasp_categories.get(owasp_category, 0) + 1
         if _is_skipped_dict(finding):
+            skipped_total += 1
             continue
         dedupe_key = (category, str(finding.get("title", finding.get("id", ""))).lower())
         if dedupe_key in effective_seen:
@@ -177,6 +184,7 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
             )
     return {
         "total": len(findings),
+        "skipped_total": skipped_total,
         "effective_total": len(effective_seen),
         "critical": severity_counts["critical"],
         "high": severity_counts["high"],
@@ -211,8 +219,7 @@ def _severity_label(value: Any) -> str:
 
 
 def _is_skipped_dict(finding: dict[str, Any]) -> bool:
-    text = f"{finding.get('id', finding.get('check_id', ''))} {finding.get('title', '')} {finding.get('evidence', '')}".lower()
-    return "skipped" in text or finding.get("metadata", {}).get("skipped") is True
+    return dict_skip_reason(finding) is not None
 
 
 def _grade_for_score(score: int) -> str:

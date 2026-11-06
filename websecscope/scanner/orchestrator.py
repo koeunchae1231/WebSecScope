@@ -14,6 +14,7 @@ from websecscope.scanner.linux_scanner import scan_linux_security
 from websecscope.scanner.service_detector import detect_services
 from websecscope.scanner.version_detector import detect_versions
 from websecscope.scanner.web import scan_web_target
+from websecscope.policy import ScanPolicy
 
 
 def run_scan(
@@ -24,9 +25,12 @@ def run_scan(
     include_docker: bool = True,
     include_service_detect: bool = True,
     include_cve: bool = True,
+    policy: ScanPolicy | None = None,
 ) -> ScanResult:
+    if policy is not None:
+        policy.ensure_target(target)
     findings = []
-    findings.extend(scan_web_target(target))
+    findings.extend(scan_web_target(target, policy=policy) if policy is not None else scan_web_target(target))
     api_scan = {"enabled": False, "reason": "API/Auth analysis skipped by CLI option."}
     auth_scan = {"enabled": False, "reason": "API/Auth analysis skipped by CLI option."}
     linux_scan = {"status": "skipped", "reason": "Linux scan skipped by CLI option.", "evidence": ["Linux scan skipped by CLI option."]}
@@ -38,7 +42,7 @@ def run_scan(
     if include_api_auth:
         api_scan = scan_api_endpoints(target)
         auth_scan = scan_auth_controls(target, api_scan)
-        findings.extend(analyze_api_auth(api_scan, auth_scan))
+        findings.extend(analyze_api_auth(api_scan, auth_scan, policy=policy) if policy is not None else analyze_api_auth(api_scan, auth_scan))
         scanners.append("api_auth")
     if include_linux:
         linux_scan = scan_linux_security()
@@ -57,13 +61,16 @@ def run_scan(
     findings.extend(cve_findings)
     if include_cve:
         scanners.append("cve")
-    score = calculate_score(findings)
+    score_details = {}
+    score = calculate_score(findings, details=score_details)
     return ScanResult(
         target=target,
         findings=findings,
         score=score,
+        score_details=score_details,
         language=language,
-        metadata={"scanners": scanners},
+        metadata={"scanners": scanners, **({"policy": {"policy_version": 1, "sha256": policy.digest,
+                  "target_origin": list(policy.origin)}} if policy is not None else {})},
         api_scan=api_scan,
         auth_scan=auth_scan,
         linux_scan=linux_scan,

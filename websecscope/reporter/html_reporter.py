@@ -8,6 +8,7 @@ from typing import Any
 
 from websecscope.i18n import localize_finding, normalize_language, severity_label, text
 from websecscope.models import summarize_findings
+from websecscope.finding_state import dict_skip_reason
 from websecscope.reporter.llm_report_generator import LLMReportRequest, generate_llm_report
 from websecscope.utils import ensure_parent
 from websecscope.visualizer.html import score_class, status_class
@@ -209,7 +210,17 @@ def render_score_gauge(result: dict[str, Any]) -> str:
 
 
 def _localized_findings(findings: list[dict[str, Any]], language: str) -> list[dict[str, Any]]:
-    return [localize_finding(dict(finding), language) for finding in findings]
+    result = []
+    for finding in findings:
+        payload = localize_finding(dict(finding), language)
+        payload["skip_reason"] = dict_skip_reason(finding)
+        payload["skipped"] = payload["skip_reason"] is not None
+        result.append(payload)
+    return result
+
+
+def _skip_badge(finding: dict[str, Any]) -> str:
+    return ' <span class="badge">SKIPPED</span>' if dict_skip_reason(finding) else ""
 
 
 def _finding_row(finding: dict[str, Any]) -> str:
@@ -218,7 +229,7 @@ def _finding_row(finding: dict[str, Any]) -> str:
     language = finding.get("language")
     return f"""
         <tr>
-          <td><span class="badge {status_class(status)}">{status}</span></td>
+          <td><span class="badge {status_class(status)}">{status}</span>{_skip_badge(finding)}</td>
           <td><span class="risk-{escape(severity)}">{escape(str(finding.get("severity_label") or severity_label(severity, language)))}</span></td>
           <td>{escape(str(finding.get("category", "")))}</td>
           <td>{escape(str(finding.get("owasp_category", "")))}</td>
@@ -256,7 +267,7 @@ def _finding_card(finding: dict[str, Any], language: str) -> str:
           <div class="finding-head">
             <h3 class="finding-title">{escape(str(finding.get("title", "")))}</h3>
             <span>
-              <span class="badge {status_class(status)}">{escape(status)}</span>
+              <span class="badge {status_class(status)}">{escape(status)}</span>{_skip_badge(finding)}
               <span class="risk-{escape(severity)}">{escape(severity_text)}</span>
             </span>
           </div>
@@ -436,7 +447,7 @@ def _category_section(title: str, findings: list[dict[str, Any]], categories: se
         rows = "\n".join(
             f"""
         <tr>
-          <td><span class="badge {status_class(str(finding.get('status', 'WARNING')))}">{escape(str(finding.get('status', 'WARNING')))}</span></td>
+          <td><span class="badge {status_class(str(finding.get('status', 'WARNING')))}">{escape(str(finding.get('status', 'WARNING')))}</span>{_skip_badge(finding)}</td>
           <td><span class="risk-{escape(str(finding.get('severity', 'informational')))}">{escape(str(finding.get('severity_label', finding.get('severity', 'informational'))))}</span></td>
           <td>{escape(str(finding.get('owasp_category', '')))}</td>
           <td>{escape(str(finding.get('title', '')))}</td>

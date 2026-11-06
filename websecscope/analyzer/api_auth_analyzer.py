@@ -8,6 +8,9 @@ from typing import Any
 
 from websecscope.guide import recommendation_for
 from websecscope.models import FAIL, PASS, WARNING, Finding, RISK_HIGH, RISK_INFO, RISK_LOW, RISK_MEDIUM, build_finding
+from websecscope.rules.api_evidence import private_response, public_response, response_kind
+from websecscope.rules.web.cookie_values import cookie_attributes
+from websecscope.policy import evaluate_cookie, resource_decision, cookie_summary
 
 SUCCESS_STATUSES = {200, 201, 202, 204}
 PROTECTED_STATUSES = {401, 403}
@@ -19,13 +22,16 @@ SENSITIVE_JWT_KEYS = {"email", "phone", "password", "passwd", "ssn", "token", "s
 LONG_EXP_SECONDS = 60 * 60 * 24 * 365
 
 
-def analyze_api_auth(api_scan: dict, auth_scan: dict) -> list[Finding]:
+def analyze_api_auth(api_scan: dict, auth_scan: dict, policy=None) -> list[Finding]:
     endpoints = api_scan.get("endpoints", [])
     auth_paths = auth_scan.get("auth_paths", [])
     findings: list[Finding] = []
-    findings.extend(_analyze_endpoint_exposure(endpoints))
+    findings.extend(_analyze_endpoint_exposure(endpoints, policy))
     findings.extend(_analyze_auth_access(endpoints))
-    findings.extend(_analyze_cookie_security(endpoints))
+    cookie_candidates = list(endpoints)
+    observed = {id(e) for e in endpoints}
+    cookie_candidates.extend(e for e in auth_paths if id(e) not in observed)
+    findings.extend(_analyze_cookie_security(cookie_candidates, policy))
     findings.extend(_analyze_jwt_usage(endpoints))
     findings.extend(_analyze_cors(endpoints))
     findings.extend(_analyze_idor_patterns(endpoints))
@@ -33,51 +39,71 @@ def analyze_api_auth(api_scan: dict, auth_scan: dict) -> list[Finding]:
     return findings
 
 
-def _analyze_endpoint_exposure(endpoints: list[dict[str, Any]]) -> list[Finding]:
+def _analyze_endpoint_exposure(endpoints: list[dict[str, Any]], policy=None) -> list[Finding]:
     exposed_docs = []
+    docs_review = []
     exposed_admin = []
+    admin_details = []
+    policy_observations = []
     for endpoint in endpoints:
         path = endpoint.get("path", "")
         status = endpoint.get("status_code")
-        if status in SUCCESS_STATUSES and path in SENSITIVE_DOC_PATHS:
-            exposed_docs.append(_endpoint_evidence(endpoint))
-        if status in SUCCESS_STATUSES and any(marker in path.lower() for marker in ADMIN_PATH_MARKERS):
-            exposed_admin.append(_endpoint_evidence(endpoint))
+        kind = endpoint.get('response_kind') or response_kind(endpoint)
+        decision = resource_decision(dict(endpoint, response_kind=kind), policy)
+        if decision is not None:
+            policy_observations.append({'path':path,**decision})
+            if decision['status'] == PASS:
+                if status in SUCCESS_STATUSES: kind = 'public_document'
+            elif decision['status'] == FAIL: kind = 'private_data'
+            else: kind = 'unconfirmed'
+        if status in SUCCESS_STATUSES and path in SENSITIVE_DOC_PATHS and kind not in {'public_shell','redirected','public_document'}:
+            (docs_review if decision is not None and decision['status'] == WARNING else exposed_docs).append(_endpoint_evidence(endpoint))
+        if any(marker in path.lower() for marker in ADMIN_PATH_MARKERS):
+            admin_details.append({'path':path,'kind':kind,'private_evidence':private_response(endpoint),
+                                  'body_evidence':endpoint.get('body_evidence',{}),
+                                  'redirect_observation':endpoint.get('redirect_observation',{})})
+            if kind == 'private_data':
+                exposed_admin.append(_endpoint_evidence(endpoint))
 
     findings = []
-    if exposed_docs:
+    if exposed_docs or docs_review:
         findings.append(_finding(
             "API_DOCS_EXPOSED",
             "api",
             "Sensitive API documentation may be exposed",
-            FAIL,
+            FAIL if exposed_docs else WARNING,
             RISK_MEDIUM,
             "Publicly reachable API documentation can disclose routes, schemas, and authentication assumptions.",
-            "; ".join(exposed_docs),
+            "; ".join(exposed_docs or docs_review),
             recommendation_for("API_DOCS_EXPOSED"),
         ))
-    if exposed_admin:
+    admin_review = any(e['kind'] in {'unconfirmed','redirected','request_error','server_error'} for e in admin_details)
+    if exposed_admin or admin_review:
         findings.append(_finding(
             "API_ADMIN_PATH_EXPOSED",
             "api",
             "Administrative API path may be exposed",
-            FAIL,
-            RISK_HIGH,
-            "An administrative path returned a success status without authentication context.",
-            "; ".join(exposed_admin),
+            FAIL if exposed_admin else WARNING,
+            RISK_HIGH if exposed_admin else RISK_LOW,
+            "Unauthenticated administrative candidate content was assessed; status alone does not establish disclosure.",
+            "; ".join(exposed_admin) if exposed_admin else str(admin_details),
             recommendation_for("API_ADMIN_PATH_EXPOSED"),
+            {"observations":admin_details,"browser_exploitation_verified":False},
         ))
-    if not findings:
+    if not exposed_admin and not admin_review:
         findings.append(_finding(
             "API_ENDPOINT_EXPOSURE",
             "api",
             "API exposure baseline",
             PASS,
             RISK_INFO,
-            "No sensitive API documentation or administrative candidate returned a success status.",
+            "Administrative candidates were absent, protected or matched public HTML controls. Documentation results are reported separately.",
             _summarize_statuses(endpoints),
             "No action required.",
         ))
+    if policy_observations:
+        for finding in findings:
+            finding.metadata['resource_policy_observations'] = policy_observations
     return findings
 
 
@@ -88,6 +114,28 @@ def _analyze_auth_access(endpoints: list[dict[str, Any]]) -> list[Finding]:
         if not _is_api_or_admin_path(path):
             continue
         status = endpoint.get("status_code")
+        kind = endpoint.get('response_kind') or response_kind(endpoint)
+        if kind == 'public_shell':
+            findings.append(_finding(f"AUTH_PUBLIC_SHELL_{_id_part(path)}", "auth", "Public application shell observed", PASS, RISK_INFO,
+                                     "The response matched root and missing-path HTML controls; no administrative data observed in this sample.",
+                                     _endpoint_evidence(endpoint), "No action required."))
+            continue
+        if kind in {'request_error','redirected','server_error'}:
+            findings.append(_finding(f"AUTH_MAY_BE_MISSING_{_id_part(path)}", "auth", "Authentication observation incomplete", WARNING, RISK_LOW,
+                                     "Request error, redirect or server error prevents an authentication conclusion.",_endpoint_evidence(endpoint),
+                                     "Review the recorded request and authorization policy."))
+            continue
+        if status == 404:
+            findings.append(_finding(
+                f"AUTH_MAY_BE_MISSING_{_id_part(path)}", "auth", "Authentication not assessed: path not found",
+                WARNING, RISK_LOW,
+                "HTTP 404 was observed on an authentication candidate; it does not establish authentication protection or a vulnerability.",
+                _endpoint_evidence(endpoint),
+                "Verify routing and the intended access policy before assessing authentication.",
+                {"path": path, "http_status": status, "reason_code": "NOT_FOUND_AUTH_UNASSESSED",
+                 "authentication_assessed": False},
+            ))
+            continue
         if status in SUCCESS_STATUSES:
             findings.append(_finding(
                 f"AUTH_MAY_BE_MISSING_{_id_part(path)}",
@@ -98,6 +146,8 @@ def _analyze_auth_access(endpoints: list[dict[str, Any]]) -> list[Finding]:
                 "A candidate API path returned a success status without an Authorization header.",
                 _endpoint_evidence(endpoint),
                 recommendation_for("AUTH_MAY_BE_MISSING"),
+                {"body_evidence":endpoint.get('body_evidence',{}),"body_truncated":endpoint.get('body_truncated',False),
+                 "redirect_observation":endpoint.get('redirect_observation',{})},
             ))
         elif status in PROTECTED_STATUSES:
             findings.append(_finding(
@@ -113,27 +163,28 @@ def _analyze_auth_access(endpoints: list[dict[str, Any]]) -> list[Finding]:
     return findings
 
 
-def _analyze_cookie_security(endpoints: list[dict[str, Any]]) -> list[Finding]:
-    weak = []
-    protected = []
+def _analyze_cookie_security(endpoints: list[dict[str, Any]], policy=None) -> list[Finding]:
+    details = []
+    errors = []
     for endpoint in endpoints:
+        if endpoint.get('error'):
+            errors.append({'path':endpoint.get('path'),'error':endpoint['error']})
         for cookie in endpoint.get("set_cookie", []):
-            lower_cookie = cookie.lower()
-            missing = [flag for flag in ("samesite", "httponly", "secure") if flag not in lower_cookie]
-            if missing:
-                weak.append(f"{endpoint.get('path')}: {cookie.split(';', 1)[0]} missing {', '.join(missing)}")
-            else:
-                protected.append(endpoint.get("path"))
+            observed_url = endpoint.get('final_url') or ('' if endpoint.get('redirected') else endpoint.get('url',''))
+            details.append({'path':endpoint.get('path'),**evaluate_cookie(cookie, observed_url, policy)})
+    status = FAIL if any(e['status']==FAIL for e in details) else WARNING if errors or any(e['status']==WARNING for e in details) else PASS
     return [
         _finding(
             "AUTH_COOKIE_ATTRIBUTES",
             "auth",
             "Authentication cookie attributes",
-            FAIL if weak else PASS,
-            RISK_MEDIUM if weak else RISK_INFO,
+            status,
+            RISK_MEDIUM if status != PASS else RISK_INFO,
             "Observed Set-Cookie headers were checked for SameSite, HttpOnly, and Secure attributes.",
-            "; ".join(weak) if weak else f"Protected cookie attributes observed on {len(set(protected))} path(s)." if protected else "No Set-Cookie headers observed on API/Auth candidates.",
-            recommendation_for("WEB_COOKIE_FLAGS") if weak else "No action required.",
+            "; ".join(f"{e['path']}: {e['name']}: {cookie_summary(e, 'valid security attributes')}" for e in details)
+                + (f"; incomplete observations: {errors}" if errors else "") if details or errors else "No Set-Cookie headers observed on API/Auth candidates.",
+            recommendation_for("WEB_COOKIE_FLAGS") if status != PASS else "No action required.",
+            {"cookies":details,"errors":errors,"browser_enforcement_verified":False},
         )
     ]
 
@@ -184,37 +235,65 @@ def _analyze_cors(endpoints: list[dict[str, Any]]) -> list[Finding]:
     for endpoint in endpoints:
         cors = endpoint.get("cors", {})
         origin = (cors.get("access_control_allow_origin") or "").strip()
-        credentials = (cors.get("access_control_allow_credentials") or "").strip().lower()
+        credentials = (cors.get("access_control_allow_credentials") or "").strip()
         if origin == "*" and credentials == "true":
             findings.append(_finding(
                 f"CORS_WILDCARD_WITH_CREDENTIALS_{_id_part(endpoint.get('path', 'root'))}",
                 "cors",
-                "CORS wildcard origin allows credentials",
+                "Invalid credentialed wildcard CORS configuration",
                 FAIL,
                 RISK_HIGH,
-                "Access-Control-Allow-Origin: * combined with credentials can expose authenticated browser requests.",
+                "Wildcard origin with credentials is a configuration defect. Browsers block credentialed cross-origin response reading for this combination.",
                 _cors_evidence(endpoint),
                 recommendation_for("CORS_WILDCARD_CREDENTIALS"),
+                {"browser_exploitation_verified": False},
+            ))
+        elif origin == "null":
+            tested_origins = [p.get("origin") for p in cors.get("probes", []) if p.get("origin") is not None]
+            null_requested = "null" in tested_origins
+            findings.append(_finding(
+                f"CORS_NULL_ORIGIN_{_id_part(endpoint.get('path', 'root'))}",
+                "cors", "Literal null origin allowance requires review", WARNING, RISK_LOW,
+                "ACAO contains the literal string null, not an absent request Origin header. This setting alone does not establish private-data disclosure.",
+                _cors_evidence(endpoint)
+                + f"; recorded probe Origins={tested_origins}; Origin: null request recorded={null_requested}; credentialed browser reading not verified",
+                "Review the intended origin and data-access policy; verify an explicit Origin: null request if needed.",
+                {"path": endpoint.get("path"), "allow_origin": origin, "tested_request_origins": tested_origins,
+                 "null_origin_request_observed": null_requested, "browser_exploitation_verified": False,
+                 "observation_scope": "Recorded CORS probes; request observation is not proof of browser response access."},
             ))
         elif cors.get("origin_reflection_observed"):
+            probes = cors.get("probes", [])
+            valid = [p for p in probes if p.get('origin') and not p.get('response', {}).get('error')
+                     and not p['response'].get('redirected') and p['response'].get('status_code') in SUCCESS_STATUSES
+                     and p['response'].get('cors', {}).get('access_control_allow_origin') == p['origin']
+                     and p['response'].get('cors', {}).get('access_control_allow_credentials') == 'true'
+                     and private_response(p['response'])]
+            sufficient = (len({p['origin'] for p in valid}) >= 2 and credentials == 'true'
+                          and endpoint.get('status_code') in SUCCESS_STATUSES and not endpoint.get('error')
+                          and not endpoint.get('redirected') and bool(private_response(endpoint)))
             findings.append(_finding(
                 f"CORS_ORIGIN_REFLECTION_{_id_part(endpoint.get('path', 'root'))}",
                 "cors",
                 "CORS origin reflection suspected",
-                WARNING,
+                FAIL if sufficient else WARNING,
                 RISK_MEDIUM,
-                "The response reflected a test Origin header in Access-Control-Allow-Origin.",
+                "Two distinct origins, credential permission and private-response evidence were observed; browser exploitation was not tested."
+                if sufficient else "Origin reflection observed; two credentialed successful probes and independent private-response evidence are required to confirm this configuration defect.",
                 _cors_evidence(endpoint),
                 recommendation_for("CORS_ORIGIN_REFLECTION"),
+                {"sufficient_configuration_evidence": sufficient, "private_evidence": private_response(endpoint),
+                 "qualifying_origins": [p['origin'] for p in valid], "browser_exploitation_verified": False},
             ))
         elif origin == "*":
             findings.append(_finding(
                 f"CORS_WILDCARD_{_id_part(endpoint.get('path', 'root'))}",
                 "cors",
                 "CORS wildcard origin observed",
-                WARNING,
+                PASS if public_response(endpoint) and not endpoint.get('error') and not endpoint.get('redirected')
+                and endpoint.get('status_code') in SUCCESS_STATUSES else WARNING,
                 RISK_LOW,
-                "Wildcard CORS may be acceptable for public APIs but should be reviewed.",
+                "Wildcard without credential permission is acceptable for explicitly public responses; otherwise the data policy requires review.",
                 _cors_evidence(endpoint),
                 recommendation_for("CORS_WILDCARD"),
             ))
@@ -223,7 +302,8 @@ def _analyze_cors(endpoints: list[dict[str, Any]]) -> list[Finding]:
             "CORS_BASELINE",
             "cors",
             "CORS baseline",
-            PASS,
+            WARNING if any(e.get('error') or any(p.get('response', {}).get('error') for p in e.get('cors', {}).get('probes', []))
+                           for e in endpoints) else PASS,
             RISK_INFO,
             "No wildcard, credentialed wildcard, or origin-reflection CORS pattern was observed.",
             _summarize_cors(endpoints),

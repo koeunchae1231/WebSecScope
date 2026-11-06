@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from urllib.parse import urljoin
 
-from websecscope.scanner.api_scanner import request_observation
+from websecscope.scanner.api_scanner import endpoint_observation, request_observation
 
 AUTH_PATH_MARKERS = ("login", "auth", "signin")
 
@@ -21,15 +21,9 @@ def scan_auth_controls(target: str, api_scan: dict) -> dict:
             {
                 "path": path,
                 "url": url,
-                "status_code": observation["status_code"],
-                "content_type": observation["content_type"],
-                "server": observation["server"],
-                "cors": observation["cors"],
-                "www_authenticate": observation["www_authenticate"],
-                "set_cookie": observation["set_cookie"],
-                "headers": observation["headers"],
-                "body_sample": observation["body_sample"],
-                "error": observation["error"],
+                **endpoint_observation(observation),
+                "final_url": observation.get("final_url"),
+                "redirected": observation.get("redirected", False),
             }
         )
 
