@@ -1,0 +1,19 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [],
+  "cookies": [
+    {
+      "name": "atlas_sid",
+      "purpose": "session",
+      "javascript_access_required": false,
+      "path": "/"
+    },
+    {
+      "name": "atlas_sid",
+      "purpose": "session",
+      "javascript_access_required": false,
+      "path": "/api"
+    }
+  ]
+}

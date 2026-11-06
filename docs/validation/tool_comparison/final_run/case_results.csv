@@ -1,0 +1,53 @@
+﻿id,group,mode,truth,wss,zap,zap_alert_refs,scenario
+FH-HDR-01,primary,none,vulnerable,FAIL,FAIL,['10021'],Stylesheet gateway omits MIME-sniffing defense
+FH-HDR-01,primary,headers,vulnerable,FAIL,FAIL,['10021'],Stylesheet gateway omits MIME-sniffing defense
+FH-HDR-02,primary,none,vulnerable,FAIL,FAIL,['10020-4'],Retired frame allow-origin directive on payroll page
+FH-HDR-02,primary,headers,vulnerable,FAIL,FAIL,['10020-4'],Retired frame allow-origin directive on payroll page
+FH-HDR-05,primary,none,safe,WARNING,NO_ALERT,[],Asset proxy uses case-insensitive nosniff token
+FH-HDR-05,primary,headers,safe,WARNING,NO_ALERT,[],Asset proxy uses case-insensitive nosniff token
+FH-HDR-07,primary,none,safe,WARNING,NO_ALERT,[],Same-origin framing needed for embedded help panel
+FH-HDR-07,primary,headers,safe,WARNING,NO_ALERT,[],Same-origin framing needed for embedded help panel
+FH-HDR-08,primary,none,safe,WARNING,NO_ALERT,[],Whitespace normalization at nosniff boundary
+FH-HDR-08,primary,headers,safe,WARNING,NO_ALERT,[],Whitespace normalization at nosniff boundary
+FH-HDR-09,primary,none,unknown,WARNING,NO_ALERT,[],Method-dependent framing without a deployment contract
+FH-HDR-09,primary,headers,unknown,WARNING,NO_ALERT,[],Method-dependent framing without a deployment contract
+FH-CSP-01,primary,none,vulnerable,FAIL,FAIL,"['10055-10', '10055-13', '10055-4', '10055-5']",Broad script execution combined with object wildcard
+FH-CSP-01,primary,headers,vulnerable,FAIL,FAIL,"['10055-10', '10055-13', '10055-4', '10055-5']",Broad script execution combined with object wildcard
+FH-CSP-02,primary,none,vulnerable,WARNING,FAIL,['10038-1'],Report-only rollout leaves required enforcing header absent
+FH-CSP-02,primary,headers,vulnerable,FAIL,FAIL,['10038-1'],Report-only rollout leaves required enforcing header absent
+FH-CSP-03,primary,none,vulnerable,WARNING,FAIL,"['10055-13', '10055-4']",Nonce-bound scripts but unrestricted embedded objects
+FH-CSP-03,primary,headers,vulnerable,WARNING,FAIL,"['10055-13', '10055-4']",Nonce-bound scripts but unrestricted embedded objects
+FH-CSP-04,primary,none,vulnerable,WARNING,FAIL,['10055-13'],Split script element restriction leaves inline attributes open
+FH-CSP-04,primary,headers,vulnerable,WARNING,FAIL,['10055-13'],Split script element restriction leaves inline attributes open
+FH-CSP-05,primary,none,safe,PASS,FAIL,"['10055-10', '10055-13', '10055-4', '10055-5']",Two enforcing fields intersect broad and deny policies
+FH-CSP-05,primary,headers,safe,PASS,FAIL,"['10055-10', '10055-13', '10055-4', '10055-5']",Two enforcing fields intersect broad and deny policies
+FH-CSP-06,primary,none,safe,PASS,FAIL,['10055-13'],Separate element and attribute restrictions with default denial
+FH-CSP-06,primary,headers,safe,PASS,FAIL,['10055-13'],Separate element and attribute restrictions with default denial
+FH-CSP-07,primary,none,safe,PASS,FAIL,"['10055-13', '10055-4']",Hash-authorized script with ignored unsafe-inline fallback
+FH-CSP-07,primary,headers,safe,PASS,FAIL,"['10055-13', '10055-4']",Hash-authorized script with ignored unsafe-inline fallback
+FH-CSP-08,primary,none,safe,PASS,FAIL,"['10055-13', '10055-4']",Strict-dynamic nonce policy with closed object scope
+FH-CSP-08,primary,headers,safe,PASS,FAIL,"['10055-13', '10055-4']",Strict-dynamic nonce policy with closed object scope
+FH-CSP-09,primary,none,unknown,WARNING,FAIL,"['10055-13', '10055-4']",Tenant wildcard origin requires missing ownership context
+FH-CSP-09,primary,headers,unknown,WARNING,FAIL,"['10055-13', '10055-4']",Tenant wildcard origin requires missing ownership context
+FH-CSP-10,primary,none,unknown,WARNING,FAIL,"['10055-10', '10055-13', '10055-4']",Sandbox constraints interact with broad script fallback
+FH-CSP-10,primary,headers,unknown,WARNING,FAIL,"['10055-10', '10055-13', '10055-4']",Sandbox constraints interact with broad script fallback
+FH-COOKIE-02,primary,none,vulnerable,FAIL,FAIL,['10010'],Session cookie lacks the JavaScript isolation flag
+FH-COOKIE-02,primary,headers,vulnerable,FAIL,FAIL,['10010'],Session cookie lacks the JavaScript isolation flag
+FH-COOKIE-03,primary,none,vulnerable,FAIL,FAIL,['10054-3'],Template emits an invalid SameSite enumeration
+FH-COOKIE-03,primary,headers,vulnerable,FAIL,FAIL,['10054-3'],Template emits an invalid SameSite enumeration
+FH-COOKIE-04,primary,none,vulnerable,FAIL,FAIL,['10054-1'],API login adds a weak cookie alongside a hardened web session
+FH-COOKIE-04,primary,headers,vulnerable,FAIL,FAIL,['10054-1'],API login adds a weak cookie alongside a hardened web session
+FH-COOKIE-05,policy_supplement,none,safe,FAIL,FAIL,['10010'],Script-readable display preference is explicitly nonsensitive
+FH-COOKIE-05,policy_supplement,headers,safe,PASS,FAIL,['10010'],Script-readable display preference is explicitly nonsensitive
+FH-COOKIE-06,primary,none,safe,PASS,NO_ALERT,[],Expiring strict session preserves Expires comma
+FH-COOKIE-06,primary,headers,safe,PASS,NO_ALERT,[],Expiring strict session preserves Expires comma
+FH-COOKIE-07,primary,none,safe,PASS,NO_ALERT,[],Same-name sessions at two declared paths are both hardened
+FH-COOKIE-07,primary,headers,safe,PASS,NO_ALERT,[],Same-name sessions at two declared paths are both hardened
+FH-COOKIE-08,primary,none,safe,PASS,NO_ALERT,[],Case-insensitive flags on a cross-site session
+FH-COOKIE-08,primary,headers,safe,PASS,NO_ALERT,[],Case-insensitive flags on a cross-site session
+FH-COOKIE-09,primary,none,unknown,WARNING,NO_ALERT,[],Conflicting SameSite fields on an otherwise hardened cookie
+FH-COOKIE-09,primary,headers,unknown,WARNING,NO_ALERT,[],Conflicting SameSite fields on an otherwise hardened cookie
+FH-COOKIE-10,primary,none,unknown,WARNING,NO_ALERT,[],Malformed cookie field cannot be assigned a trustworthy purpose
+FH-COOKIE-10,primary,headers,unknown,WARNING,NO_ALERT,[],Malformed cookie field cannot be assigned a trustworthy purpose
+FH-BODY-08,primary,none,safe,FAIL,NO_ALERT,[],HEAD unsupported but GET provides valid nosniff header
+FH-BODY-08,primary,headers,safe,FAIL,NO_ALERT,[],HEAD unsupported but GET provides valid nosniff header

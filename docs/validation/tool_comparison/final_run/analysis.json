@@ -1,0 +1,1029 @@
+{
+  "metrics": {
+    "none": {
+      "wss": {
+        "TP": 6,
+        "ABSTAIN": 6,
+        "TN": 7,
+        "FP": 1,
+        "FN": 0,
+        "ERROR": 0,
+        "known": 20,
+        "unknown": 5,
+        "precision": 0.8571428571428571,
+        "recall": 1.0,
+        "coverage": 0.7,
+        "vulnerable_detection": 0.6666666666666666,
+        "conservative_accuracy": 0.65,
+        "unknown_outputs": {
+          "WARNING": 5
+        }
+      },
+      "zap": {
+        "TP": 9,
+        "TN": 7,
+        "FP": 4,
+        "FN": 0,
+        "ABSTAIN": 0,
+        "ERROR": 0,
+        "known": 20,
+        "unknown": 5,
+        "precision": 0.6923076923076923,
+        "recall": 1.0,
+        "coverage": 1.0,
+        "vulnerable_detection": 1.0,
+        "conservative_accuracy": 0.8,
+        "unknown_outputs": {
+          "NO_ALERT": 3,
+          "FAIL": 2
+        }
+      },
+      "performance": {
+        "wss": {
+          "trials": 25,
+          "seconds_total": 6.648533799998404,
+          "seconds_median": 0.2538784999997006,
+          "seconds_min": 0.23292540000011286,
+          "seconds_max": 0.3557771999999204,
+          "target_http_requests": 575,
+          "imported_messages": 0,
+          "rss_after_median_mib": 37.29296875,
+          "peak_mib_max": 40.2265625,
+          "memory_unavailable": 0
+        },
+        "zap": {
+          "trials": 25,
+          "seconds_total": 33.42258600000014,
+          "seconds_median": 1.33835259999978,
+          "seconds_min": 0.9690823000000819,
+          "seconds_max": 1.4446703000003254,
+          "target_http_requests": 0,
+          "imported_messages": 575,
+          "rss_after_median_mib": 367.75,
+          "peak_mib_max": 389.34765625,
+          "memory_unavailable": 0
+        }
+      },
+      "disagreements": [
+        "FH-HDR-05",
+        "FH-HDR-07",
+        "FH-HDR-08",
+        "FH-HDR-09",
+        "FH-CSP-02",
+        "FH-CSP-03",
+        "FH-CSP-04",
+        "FH-CSP-05",
+        "FH-CSP-06",
+        "FH-CSP-07",
+        "FH-CSP-08",
+        "FH-CSP-09",
+        "FH-CSP-10",
+        "FH-COOKIE-09",
+        "FH-COOKIE-10",
+        "FH-BODY-08"
+      ]
+    },
+    "headers": {
+      "wss": {
+        "TP": 7,
+        "ABSTAIN": 5,
+        "TN": 7,
+        "FP": 1,
+        "FN": 0,
+        "ERROR": 0,
+        "known": 20,
+        "unknown": 5,
+        "precision": 0.875,
+        "recall": 1.0,
+        "coverage": 0.75,
+        "vulnerable_detection": 0.7777777777777778,
+        "conservative_accuracy": 0.7,
+        "unknown_outputs": {
+          "WARNING": 5
+        }
+      },
+      "zap": {
+        "TP": 9,
+        "TN": 7,
+        "FP": 4,
+        "FN": 0,
+        "ABSTAIN": 0,
+        "ERROR": 0,
+        "known": 20,
+        "unknown": 5,
+        "precision": 0.6923076923076923,
+        "recall": 1.0,
+        "coverage": 1.0,
+        "vulnerable_detection": 1.0,
+        "conservative_accuracy": 0.8,
+        "unknown_outputs": {
+          "NO_ALERT": 3,
+          "FAIL": 2
+        }
+      },
+      "performance": {
+        "wss": {
+          "trials": 25,
+          "seconds_total": 6.414063600000645,
+          "seconds_median": 0.25484469999992143,
+          "seconds_min": 0.22517530000004626,
+          "seconds_max": 0.3021569000002273,
+          "target_http_requests": 575,
+          "imported_messages": 0,
+          "rss_after_median_mib": 37.30078125,
+          "peak_mib_max": 40.33203125,
+          "memory_unavailable": 0
+        },
+        "zap": {
+          "trials": 25,
+          "seconds_total": 34.22540789999903,
+          "seconds_median": 1.3751955000002454,
+          "seconds_min": 1.259841300000062,
+          "seconds_max": 1.4533203999999387,
+          "target_http_requests": 0,
+          "imported_messages": 575,
+          "rss_after_median_mib": 372.42578125,
+          "peak_mib_max": 389.34765625,
+          "memory_unavailable": 0
+        }
+      },
+      "disagreements": [
+        "FH-HDR-05",
+        "FH-HDR-07",
+        "FH-HDR-08",
+        "FH-HDR-09",
+        "FH-CSP-03",
+        "FH-CSP-04",
+        "FH-CSP-05",
+        "FH-CSP-06",
+        "FH-CSP-07",
+        "FH-CSP-08",
+        "FH-CSP-09",
+        "FH-CSP-10",
+        "FH-COOKIE-09",
+        "FH-COOKIE-10",
+        "FH-BODY-08"
+      ]
+    }
+  },
+  "case_results": [
+    {
+      "id": "FH-HDR-01",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Stylesheet gateway omits MIME-sniffing defense",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10021"
+      ],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: None; missing or empty value; GET: None; missing or empty value"
+      ]
+    },
+    {
+      "id": "FH-HDR-01",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Stylesheet gateway omits MIME-sniffing defense",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10021"
+      ],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: None; missing or empty value; GET: None; missing or empty value"
+      ]
+    },
+    {
+      "id": "FH-HDR-02",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Retired frame allow-origin directive on payroll page",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10020-4"
+      ],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: ALLOW-FROM https://portal.partner.invalid; expected DENY or SAMEORIGIN; ALLOW-FROM is obsolete; GET: ALLOW-FROM https://portal.partner.invalid; expected DENY or SAMEORIGIN; ALLOW-FROM is obsolete"
+      ]
+    },
+    {
+      "id": "FH-HDR-02",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Retired frame allow-origin directive on payroll page",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10020-4"
+      ],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: ALLOW-FROM https://portal.partner.invalid; expected DENY or SAMEORIGIN; ALLOW-FROM is obsolete; GET: ALLOW-FROM https://portal.partner.invalid; expected DENY or SAMEORIGIN; ALLOW-FROM is obsolete"
+      ]
+    },
+    {
+      "id": "FH-HDR-05",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Asset proxy uses case-insensitive nosniff token",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: NoSnIfF; nosniff configured; GET: NOSNIFF; nosniff configured"
+      ]
+    },
+    {
+      "id": "FH-HDR-05",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Asset proxy uses case-insensitive nosniff token",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: NoSnIfF; nosniff configured; GET: NOSNIFF; nosniff configured"
+      ]
+    },
+    {
+      "id": "FH-HDR-07",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Same-origin framing needed for embedded help panel",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: SAMEORIGIN; recognized frame directive; GET: sameorigin; recognized frame directive"
+      ]
+    },
+    {
+      "id": "FH-HDR-07",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Same-origin framing needed for embedded help panel",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: SAMEORIGIN; recognized frame directive; GET: sameorigin; recognized frame directive"
+      ]
+    },
+    {
+      "id": "FH-HDR-08",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Whitespace normalization at nosniff boundary",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: nosniff  ; nosniff configured; GET: nosniff; nosniff configured"
+      ]
+    },
+    {
+      "id": "FH-HDR-08",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Whitespace normalization at nosniff boundary",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: nosniff  ; nosniff configured; GET: nosniff; nosniff configured"
+      ]
+    },
+    {
+      "id": "FH-HDR-09",
+      "group": "primary",
+      "mode": "none",
+      "truth": "unknown",
+      "scenario": "Method-dependent framing without a deployment contract",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: DENY; recognized frame directive; GET: SAMEORIGIN; recognized frame directive"
+      ]
+    },
+    {
+      "id": "FH-HDR-09",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "unknown",
+      "scenario": "Method-dependent framing without a deployment contract",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Frame-Options: DENY; recognized frame directive; GET: SAMEORIGIN; recognized frame directive"
+      ]
+    },
+    {
+      "id": "FH-CSP-01",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Broad script execution combined with object wildcard",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4",
+        "10055-5"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS; GET: script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS"
+      ]
+    },
+    {
+      "id": "FH-CSP-01",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Broad script execution combined with object wildcard",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4",
+        "10055-5"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS; GET: script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS; GET: P2 script/object restriction requirement: Effective policies jointly admit broad script sources, arbitrary inline scripts/handlers and JavaScript eval; configuration hardening failure, not verified XSS"
+      ]
+    },
+    {
+      "id": "FH-CSP-02",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Report-only rollout leaves required enforcing header absent",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10038-1"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: None; No explicit enforcing policy observed; browser defaults and service requirements are not verified; GET: None; No explicit enforcing policy observed; browser defaults and service requirements are not verified"
+      ]
+    },
+    {
+      "id": "FH-CSP-02",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Report-only rollout leaves required enforcing header absent",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10038-1"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: None; No explicit enforcing policy observed; browser defaults and service requirements are not verified; GET: None; No explicit enforcing policy observed; browser defaults and service requirements are not verified; Service requirement assessment (not demonstrated exploitation): HEAD: Required nonempty enforcing header is absent; GET: Required nonempty enforcing header is absent"
+      ]
+    },
+    {
+      "id": "FH-CSP-03",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Nonce-bound scripts but unrestricted embedded objects",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'nonce-YXRsYXMtc2NyaXB0LWtleQ=='; object-src *; base-uri 'none'; CSP meaning requires review: object_broad; GET: script-src 'nonce-YXRsYXMtc2NyaXB0LWtleQ=='; object-src *; base-uri 'none'; CSP meaning requires review: object_broad"
+      ]
+    },
+    {
+      "id": "FH-CSP-03",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Nonce-bound scripts but unrestricted embedded objects",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'nonce-YXRsYXMtc2NyaXB0LWtleQ=='; object-src *; base-uri 'none'; CSP meaning requires review: object_broad; GET: script-src 'nonce-YXRsYXMtc2NyaXB0LWtleQ=='; object-src *; base-uri 'none'; CSP meaning requires review: object_broad; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: CSP meaning requires review: object_broad; GET: P2 script/object restriction requirement: CSP meaning requires review: object_broad"
+      ]
+    },
+    {
+      "id": "FH-CSP-04",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Split script element restriction leaves inline attributes open",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; object-src 'none'; CSP meaning requires review: all_inline_attributes; GET: default-src 'none'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; object-src 'none'; CSP meaning requires review: all_inline_attributes"
+      ]
+    },
+    {
+      "id": "FH-CSP-04",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Split script element restriction leaves inline attributes open",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; object-src 'none'; CSP meaning requires review: all_inline_attributes; GET: default-src 'none'; script-src-elem 'self'; script-src-attr 'unsafe-inline'; object-src 'none'; CSP meaning requires review: all_inline_attributes; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: CSP meaning requires review: all_inline_attributes; GET: P2 script/object restriction requirement: CSP meaning requires review: all_inline_attributes"
+      ]
+    },
+    {
+      "id": "FH-CSP-05",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Two enforcing fields intersect broad and deny policies",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4",
+        "10055-5"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: default-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-05",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Two enforcing fields intersect broad and deny policies",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4",
+        "10055-5"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: default-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-06",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Separate element and attribute restrictions with default denial",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; script-src-elem https://assets.atlas.invalid; script-src-attr 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: default-src 'none'; script-src-elem https://assets.atlas.invalid; script-src-attr 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-06",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Separate element and attribute restrictions with default denial",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: default-src 'none'; script-src-elem https://assets.atlas.invalid; script-src-attr 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: default-src 'none'; script-src-elem https://assets.atlas.invalid; script-src-attr 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-07",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Hash-authorized script with ignored unsafe-inline fallback",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'sha256-YXRsYXMtc3ludGhldGljLWhhc2g=' 'unsafe-inline'; object-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: script-src 'sha256-YXRsYXMtc3ludGhldGljLWhhc2g=' 'unsafe-inline'; object-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-07",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Hash-authorized script with ignored unsafe-inline fallback",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'sha256-YXRsYXMtc3ludGhldGljLWhhc2g=' 'unsafe-inline'; object-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: script-src 'sha256-YXRsYXMtc3ludGhldGljLWhhc2g=' 'unsafe-inline'; object-src 'none'; base-uri 'none'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-08",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Strict-dynamic nonce policy with closed object scope",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'nonce-QXRsYXNEaXNwYXRjaDIwMjY=' 'strict-dynamic' https:; object-src 'none'; base-uri 'self'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: script-src 'nonce-QXRsYXNEaXNwYXRjaDIwMjY=' 'strict-dynamic' https:; object-src 'none'; base-uri 'self'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-08",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Strict-dynamic nonce policy with closed object scope",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src 'nonce-QXRsYXNEaXNwYXRjaDIwMjY=' 'strict-dynamic' https:; object-src 'none'; base-uri 'self'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: script-src 'nonce-QXRsYXNEaXNwYXRjaDIwMjY=' 'strict-dynamic' https:; object-src 'none'; base-uri 'self'; Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; Service requirement assessment (not demonstrated exploitation): HEAD: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention; GET: P2 script/object restriction requirement: Checked CSP3 script/object restrictions hold under the combined-policy model; this is not complete XSS prevention"
+      ]
+    },
+    {
+      "id": "FH-CSP-09",
+      "group": "primary",
+      "mode": "none",
+      "truth": "unknown",
+      "scenario": "Tenant wildcard origin requires missing ownership context",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src https://*.tenants.atlas.invalid; object-src 'none'; CSP meaning requires review: host wildcard scope requires review; GET: script-src https://*.tenants.atlas.invalid; object-src 'none'; CSP meaning requires review: host wildcard scope requires review"
+      ]
+    },
+    {
+      "id": "FH-CSP-09",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "unknown",
+      "scenario": "Tenant wildcard origin requires missing ownership context",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: script-src https://*.tenants.atlas.invalid; object-src 'none'; CSP meaning requires review: host wildcard scope requires review; GET: script-src https://*.tenants.atlas.invalid; object-src 'none'; CSP meaning requires review: host wildcard scope requires review"
+      ]
+    },
+    {
+      "id": "FH-CSP-10",
+      "group": "primary",
+      "mode": "none",
+      "truth": "unknown",
+      "scenario": "Sandbox constraints interact with broad script fallback",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: sandbox allow-forms; script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; CSP meaning requires review: sandbox execution constraints require review; GET: sandbox allow-forms; script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; CSP meaning requires review: sandbox execution constraints require review"
+      ]
+    },
+    {
+      "id": "FH-CSP-10",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "unknown",
+      "scenario": "Sandbox constraints interact with broad script fallback",
+      "wss": "WARNING",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10055-10",
+        "10055-13",
+        "10055-4"
+      ],
+      "wss_evidence": [
+        "HEAD Content-Security-Policy: sandbox allow-forms; script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; CSP meaning requires review: sandbox execution constraints require review; GET: sandbox allow-forms; script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; CSP meaning requires review: sandbox execution constraints require review"
+      ]
+    },
+    {
+      "id": "FH-COOKIE-02",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Session cookie lacks the JavaScript isolation flag",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_sid: missing httponly",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-02",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Session cookie lacks the JavaScript isolation flag",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_sid: missing httponly; dispatch_sid: missing httponly",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-03",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "Template emits an invalid SameSite enumeration",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10054-3"
+      ],
+      "wss_evidence": [
+        "dispatch_sid: invalid SameSite value; expected Strict, Lax or None",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-03",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "Template emits an invalid SameSite enumeration",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10054-3"
+      ],
+      "wss_evidence": [
+        "dispatch_sid: invalid SameSite value; expected Strict, Lax or None; dispatch_sid: invalid SameSite value; expected Strict, Lax or None",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-04",
+      "group": "primary",
+      "mode": "none",
+      "truth": "vulnerable",
+      "scenario": "API login adds a weak cookie alongside a hardened web session",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10054-1"
+      ],
+      "wss_evidence": [
+        "web_sid: valid Secure, HttpOnly and SameSite attributes",
+        "/api/login: api_sid: missing secure, missing samesite"
+      ]
+    },
+    {
+      "id": "FH-COOKIE-04",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "vulnerable",
+      "scenario": "API login adds a weak cookie alongside a hardened web session",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10054-1"
+      ],
+      "wss_evidence": [
+        "web_sid: valid Secure, HttpOnly and SameSite attributes; web_sid: valid Secure, HttpOnly and SameSite attributes",
+        "/api/login: api_sid: missing secure, missing samesite"
+      ]
+    },
+    {
+      "id": "FH-COOKIE-05",
+      "group": "policy_supplement",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Script-readable display preference is explicitly nonsensitive",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_density: missing httponly",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-05",
+      "group": "policy_supplement",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Script-readable display preference is explicitly nonsensitive",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_density: HttpOnly absence permitted for declared JavaScript preference; Secure/SameSite remain required; dispatch_density: HttpOnly absence permitted for declared JavaScript preference; Secure/SameSite remain required",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-06",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Expiring strict session preserves Expires comma",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "operator_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-06",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Expiring strict session preserves Expires comma",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "operator_sid: valid Secure, HttpOnly and SameSite attributes; operator_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-07",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Same-name sessions at two declared paths are both hardened",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "atlas_sid: valid Secure, HttpOnly and SameSite attributes; atlas_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-07",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Same-name sessions at two declared paths are both hardened",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "atlas_sid: valid Secure, HttpOnly and SameSite attributes; atlas_sid: valid Secure, HttpOnly and SameSite attributes; atlas_sid: valid Secure, HttpOnly and SameSite attributes; atlas_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-08",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Case-insensitive flags on a cross-site session",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "carrier_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-08",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Case-insensitive flags on a cross-site session",
+      "wss": "PASS",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "carrier_sid: valid Secure, HttpOnly and SameSite attributes; carrier_sid: valid Secure, HttpOnly and SameSite attributes",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-09",
+      "group": "primary",
+      "mode": "none",
+      "truth": "unknown",
+      "scenario": "Conflicting SameSite fields on an otherwise hardened cookie",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "atlas_sid: duplicate or conflicting security attributes; browser resolution is not assumed",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-09",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "unknown",
+      "scenario": "Conflicting SameSite fields on an otherwise hardened cookie",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "atlas_sid: duplicate or conflicting security attributes; browser resolution is not assumed; atlas_sid: duplicate or conflicting security attributes; browser resolution is not assumed",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-10",
+      "group": "primary",
+      "mode": "none",
+      "truth": "unknown",
+      "scenario": "Malformed cookie field cannot be assigned a trustworthy purpose",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "unparsed: malformed cookie field; attributes cannot be trusted",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-10",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "unknown",
+      "scenario": "Malformed cookie field cannot be assigned a trustworthy purpose",
+      "wss": "WARNING",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "unparsed: malformed cookie field; attributes cannot be trusted; unparsed: malformed cookie field; attributes cannot be trusted",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-BODY-08",
+      "group": "primary",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "HEAD unsupported but GET provides valid nosniff header",
+      "wss": "FAIL",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: None; missing or empty value; GET: nosniff; nosniff configured"
+      ]
+    },
+    {
+      "id": "FH-BODY-08",
+      "group": "primary",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "HEAD unsupported but GET provides valid nosniff header",
+      "wss": "FAIL",
+      "zap": "NO_ALERT",
+      "zap_alert_refs": [],
+      "wss_evidence": [
+        "HEAD X-Content-Type-Options: None; missing or empty value; GET: nosniff; nosniff configured"
+      ]
+    }
+  ],
+  "policy_supplement": [
+    {
+      "id": "FH-COOKIE-05",
+      "group": "policy_supplement",
+      "mode": "none",
+      "truth": "safe",
+      "scenario": "Script-readable display preference is explicitly nonsensitive",
+      "wss": "FAIL",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_density: missing httponly",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    },
+    {
+      "id": "FH-COOKIE-05",
+      "group": "policy_supplement",
+      "mode": "headers",
+      "truth": "safe",
+      "scenario": "Script-readable display preference is explicitly nonsensitive",
+      "wss": "PASS",
+      "zap": "FAIL",
+      "zap_alert_refs": [
+        "10010"
+      ],
+      "wss_evidence": [
+        "dispatch_density: HttpOnly absence permitted for declared JavaScript preference; Secure/SameSite remain required; dispatch_density: HttpOnly absence permitted for declared JavaScript preference; Secure/SameSite remain required",
+        "No Set-Cookie headers observed on API/Auth candidates."
+      ]
+    }
+  ],
+  "adapter_correction": {
+    "reason": "Raw ZAP API risk is a label (Low/Medium/High), not riskcode. Runner defaulted missing riskcode to 0 and its convenience status/mapped_alerts are invalid. Recompute from preserved full alerts; original positivity rule risk>=1 and all IDs/refs unchanged. No scan or truth changed.",
+    "corrected_status_trials": [
+      "FH-HDR-01-none",
+      "FH-HDR-01-headers",
+      "FH-HDR-02-none",
+      "FH-HDR-02-headers",
+      "FH-CSP-01-none",
+      "FH-CSP-01-headers",
+      "FH-CSP-02-none",
+      "FH-CSP-02-headers",
+      "FH-CSP-03-none",
+      "FH-CSP-03-headers",
+      "FH-CSP-04-none",
+      "FH-CSP-04-headers",
+      "FH-CSP-05-none",
+      "FH-CSP-05-headers",
+      "FH-CSP-06-none",
+      "FH-CSP-06-headers",
+      "FH-CSP-07-none",
+      "FH-CSP-07-headers",
+      "FH-CSP-08-none",
+      "FH-CSP-08-headers",
+      "FH-CSP-09-none",
+      "FH-CSP-09-headers",
+      "FH-CSP-10-none",
+      "FH-CSP-10-headers",
+      "FH-COOKIE-02-none",
+      "FH-COOKIE-02-headers",
+      "FH-COOKIE-03-none",
+      "FH-COOKIE-03-headers",
+      "FH-COOKIE-04-none",
+      "FH-COOKIE-04-headers",
+      "FH-COOKIE-05-none",
+      "FH-COOKIE-05-headers"
+    ]
+  },
+  "integrity": {
+    "checked": 1371,
+    "changed": [],
+    "at": "2026-11-05T11:04:43.582436+00:00"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [
+    {
+      "path": "/api/admin",
+      "visibility": "private"
+    },
+    {
+      "path": "/admin",
+      "visibility": "private"
+    }
+  ],
+  "cookies": []
+}

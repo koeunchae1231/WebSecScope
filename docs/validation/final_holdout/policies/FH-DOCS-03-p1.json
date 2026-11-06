@@ -1,0 +1,11 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [
+    {
+      "path": "/api-docs",
+      "visibility": "public"
+    }
+  ],
+  "cookies": []
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "name": "XContentTypeOptionsScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/XContentTypeOptionsScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "AntiClickjackingScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/AntiClickjackingScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "StrictTransportSecurityScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/StrictTransportSecurityScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "ContentSecurityPolicyScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "ContentSecurityPolicyMissingScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyMissingScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "CookieHttpOnlyScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieHttpOnlyScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "CookieSecureFlagScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSecureFlagScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "CookieSameSiteScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CookieSameSiteScanRule.java",
+    "downloaded": true
+  },
+  {
+    "name": "CrossDomainMisconfigurationScanRule",
+    "url": "https://raw.githubusercontent.com/zaproxy/zap-extensions/pscanrules-v70/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainMisconfigurationScanRule.java",
+    "downloaded": true
+  }
+]

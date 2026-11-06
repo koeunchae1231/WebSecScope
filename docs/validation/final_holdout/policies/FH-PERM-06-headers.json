@@ -1,0 +1,22 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [],
+  "cookies": [],
+  "header_requirements": [
+    {
+      "path": "/",
+      "required_headers": [
+        "Permissions-Policy"
+      ],
+      "strength": {
+        "Permissions-Policy": {
+          "deny_features": [
+            "camera",
+            "geolocation"
+          ]
+        }
+      }
+    }
+  ]
+}

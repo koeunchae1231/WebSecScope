@@ -1,0 +1,222 @@
+[
+  {
+    "case_id": "FH-CSP-02",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-REF-01",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-REF-02",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-REF-03",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-REF-04",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-REF-06",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-PERM-01",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "PASS",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-PERM-02",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "PASS",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-PERM-03",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "WARNING",
+      "none": "PASS",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-PERM-04",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-CONFIG-05",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "WARNING",
+      "none": "FAIL",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-CONFIG-06",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "WARNING",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-CONFIG-07",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "WARNING",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-03",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "WARNING",
+      "none": "FAIL",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-04",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "WARNING",
+      "none": "FAIL",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-05",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "FAIL",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-06",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "FAIL",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-07",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "FAIL",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-DOCS-09",
+    "truth": "unknown",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "WARNING",
+      "none": "FAIL",
+      "p1": "WARNING"
+    }
+  },
+  {
+    "case_id": "FH-COOKIE-05",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "FAIL",
+      "p1": "PASS"
+    }
+  },
+  {
+    "case_id": "FH-AUTH-04",
+    "truth": "vulnerable",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "FAIL",
+      "none": "WARNING",
+      "p1": "FAIL"
+    }
+  },
+  {
+    "case_id": "FH-BODY-06",
+    "truth": "safe",
+    "policy_needed": true,
+    "statuses": {
+      "headers": "PASS",
+      "none": "WARNING",
+      "p1": "PASS"
+    }
+  }
+]

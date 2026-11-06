@@ -1,0 +1,1433 @@
+{
+  "registered_at": "2026-11-05T11:00:38.936876+00:00",
+  "cases": [
+    {
+      "id": "FH-HDR-01",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Stylesheet gateway omits MIME-sniffing defense",
+      "selector": [
+        "WEB_HEADER_X_CONTENT_TYPE_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10021"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-02",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Retired frame allow-origin directive on payroll page",
+      "selector": [
+        "WEB_HEADER_X_FRAME_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10020"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "HSTS duration has negative integer after gateway templating",
+      "selector": [
+        "WEB_HEADER_STRICT_TRANSPORT_SECURITY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP"
+    },
+    {
+      "id": "FH-HDR-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "HEAD hardened but document GET disables persistence",
+      "selector": [
+        "WEB_HEADER_STRICT_TRANSPORT_SECURITY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP"
+    },
+    {
+      "id": "FH-HDR-05",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Asset proxy uses case-insensitive nosniff token",
+      "selector": [
+        "WEB_HEADER_X_CONTENT_TYPE_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10021"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "HSTS quoted persistence with unknown extension",
+      "selector": [
+        "WEB_HEADER_STRICT_TRANSPORT_SECURITY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP"
+    },
+    {
+      "id": "FH-HDR-07",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Same-origin framing needed for embedded help panel",
+      "selector": [
+        "WEB_HEADER_X_FRAME_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10020"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-08",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Whitespace normalization at nosniff boundary",
+      "selector": [
+        "WEB_HEADER_X_CONTENT_TYPE_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10021"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-09",
+      "group": "primary",
+      "truth": "unknown",
+      "scenario": "Method-dependent framing without a deployment contract",
+      "selector": [
+        "WEB_HEADER_X_FRAME_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10020"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-HDR-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Duplicate conflicting HSTS durations through two proxies",
+      "selector": [
+        "WEB_HEADER_STRICT_TRANSPORT_SECURITY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP"
+    },
+    {
+      "id": "FH-CSP-01",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Broad script execution combined with object wildcard",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-02",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Report-only rollout leaves required enforcing header absent",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-03",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Nonce-bound scripts but unrestricted embedded objects",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-04",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Split script element restriction leaves inline attributes open",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-05",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Two enforcing fields intersect broad and deny policies",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-06",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Separate element and attribute restrictions with default denial",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-07",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Hash-authorized script with ignored unsafe-inline fallback",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-08",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Strict-dynamic nonce policy with closed object scope",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-09",
+      "group": "primary",
+      "truth": "unknown",
+      "scenario": "Tenant wildcard origin requires missing ownership context",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CSP-10",
+      "group": "primary",
+      "truth": "unknown",
+      "scenario": "Sandbox constraints interact with broad script fallback",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [
+        "10038",
+        "10055"
+      ],
+      "zap_alert_refs": [
+        "10055-4",
+        "10055-5",
+        "10055-7",
+        "10055-9",
+        "10055-10",
+        "10055-13"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-REF-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Invoice query URL sent under unsafe-url",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Fallback list ends with downgrade-only restriction",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Later unsafe token overrides earlier strict field",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Missing response policy on mandated privacy endpoint",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Last recognized fallback ignores future token",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Same-origin detailed referrers with cross-origin origin only",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Strict cross-origin policy on redirect landing document",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Same-origin referrers only for embedded billing widget",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Origin-only disclosure without an owner privacy contract",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-REF-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Strict but method-dependent privacy policies",
+      "selector": [
+        "WEB_HEADER_REFERRER_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Camera self grant on camera-free invoice viewer",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Microphone delegated to conferencing partner on silent kiosk",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Camera directive omitted from explicit denial contract",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Geolocation wildcard combined with camera denial",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Multi-feature deny list for offline manifest viewer",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Microphone permitted while camera and location are forbidden",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Separate header fields carry disjoint feature denials",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Required camera denial alongside unrelated future feature",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Duplicate camera declarations cross proxy trust boundary",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-PERM-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Unsupported wildcard origin expression in allowlist",
+      "selector": [
+        "WEB_HEADER_PERMISSIONS_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Dotenv multiline secret and service identity exposed",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Nested connection catalog in an environment JSON resource",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "BOM-prefixed detached repository object reference",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Diagnostic definition list contains database credential",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public ZIP distribution happens to use backup filename",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Environment tutorial rendered as escaped code",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Git teaching page discusses a reference without exposing one",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Retired resource routes return gone without content",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Partial-range environment fragment lacks identity context",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CONFIG-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Unavailable environment route with gateway incident JSON",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Private OpenAPI callback inventory returned anonymously",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Internal Swagger UI with private caching marker",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Public API document accidentally carries a deployment credential",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Public OpenAPI server extension embeds an operational token",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public OpenAPI example uses an explicit token placeholder",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public UI shells reference documentation bundles",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public machine-readable changelog at old docs route",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Private document authentication challenge returns no content",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "OpenAPI response ends before the schemas object closes",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-DOCS-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Documentation upstream returns bad gateway",
+      "selector": [
+        "API_DOCS_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-COOKIE-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Cross-site session omits Secure",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP"
+    },
+    {
+      "id": "FH-COOKIE-02",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Session cookie lacks the JavaScript isolation flag",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-03",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "Template emits an invalid SameSite enumeration",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-04",
+      "group": "primary",
+      "truth": "vulnerable",
+      "scenario": "API login adds a weak cookie alongside a hardened web session",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-05",
+      "group": "policy_supplement",
+      "truth": "safe",
+      "scenario": "Script-readable display preference is explicitly nonsensitive",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-06",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Expiring strict session preserves Expires comma",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-07",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Same-name sessions at two declared paths are both hardened",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-08",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "Case-insensitive flags on a cross-site session",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-09",
+      "group": "primary",
+      "truth": "unknown",
+      "scenario": "Conflicting SameSite fields on an otherwise hardened cookie",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-COOKIE-10",
+      "group": "primary",
+      "truth": "unknown",
+      "scenario": "Malformed cookie field cannot be assigned a trustworthy purpose",
+      "selector": [
+        "WEB_COOKIE_FLAGS",
+        "AUTH_COOKIE_ATTRIBUTES"
+      ],
+      "zap_plugin_ids": [
+        "10010",
+        "10054"
+      ],
+      "zap_alert_refs": [
+        "10054-1",
+        "10054-3"
+      ],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-CORS-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Reflected arbitrary credentialed origins expose private dispatch data",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Wildcard credentials on a public integration route",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Reflected credentialed private HTML fragment",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Anonymous wildcard reading of a private customer record",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public carrier catalog allows anonymous wildcard access",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Single trusted widget origin receives credentialed access",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Origin reflection on a public noncredentialed badge resource",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Protected API emits no CORS sharing permission",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Literal null allowance without a tested null request context",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-CORS-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Second reflected-origin probe is incomplete",
+      "selector": [
+        "CORS_"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Administrative JSON returns a nested deployment secret",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Administrative HTML private record differs from public shell",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "User API discloses private records without an auth challenge",
+      "selector": [
+        "AUTH_MAY_BE_MISSING_API_USERS",
+        "AUTH_PROTECTED_API_USERS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Administrative business-data schema lacks heuristic secret labels",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Administrative candidates reject anonymous requests",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "User API returns explicit forbidden response",
+      "selector": [
+        "AUTH_PROTECTED_API_USERS",
+        "AUTH_MAY_BE_MISSING_API_USERS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Public application shell matches both independent controls",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-08",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Administrative login redirect exposes only public sign-in UI",
+      "selector": [
+        "API_ADMIN_PATH_EXPOSED",
+        "API_ENDPOINT_EXPOSURE"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Masked user route fails before authorization decision",
+      "selector": [
+        "AUTH_MAY_BE_MISSING_API_USERS",
+        "AUTH_PROTECTED_API_USERS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-AUTH-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Route negotiation rejects an unsupported user API representation",
+      "selector": [
+        "AUTH_MAY_BE_MISSING_API_USERS",
+        "AUTH_PROTECTED_API_USERS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-01",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "UTF-16 credential JSON with a declared charset",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-02",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "UTF-8 BOM precedes the only environment assignment",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-03",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Multipart response wraps a private environment part",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-04",
+      "group": "excluded",
+      "truth": "vulnerable",
+      "scenario": "Credential begins after the 16KiB collection boundary",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-05",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Complete public configuration example uses only placeholders",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-06",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "JSON string tutorial is mislabeled as text but contains no secret",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-07",
+      "group": "excluded",
+      "truth": "safe",
+      "scenario": "Compressed public environment syntax reference",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-08",
+      "group": "primary",
+      "truth": "safe",
+      "scenario": "HEAD unsupported but GET provides valid nosniff header",
+      "selector": [
+        "WEB_HEADER_X_CONTENT_TYPE_OPTIONS"
+      ],
+      "zap_plugin_ids": [
+        "10021"
+      ],
+      "zap_alert_refs": [],
+      "reason": "Shared response configuration check; unknown truth retained outside confusion matrix."
+    },
+    {
+      "id": "FH-BODY-09",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Connection closes before environment response headers",
+      "selector": [
+        "WEB_SENSITIVE_PATHS"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    },
+    {
+      "id": "FH-BODY-10",
+      "group": "excluded",
+      "truth": "unknown",
+      "scenario": "Document GET stalls after a successful HEAD policy observation",
+      "selector": [
+        "WEB_HEADER_CONTENT_SECURITY_POLICY"
+      ],
+      "zap_plugin_ids": [],
+      "zap_alert_refs": [],
+      "reason": "Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules"
+    }
+  ],
+  "primary_cases": 25,
+  "policy_supplement": 1,
+  "source_sha256": "21a92bf70afb9f350fe9a4cc8c194c14fcccac765498def480c41ea0e6914535",
+  "runner_sha256": "223968bbb893a2c02fc4088542beec4c5b40ec1bd33c8e14992f52d0a061e1ff",
+  "modes": [
+    "none",
+    "headers"
+  ],
+  "repeats": 1,
+  "mapping": "Case-level, duplicate findings/alerts collapse. WSS frozen prefix selector: FAIL > WARNING > PASS; missing=ERROR. ZAP mapped alert on root URL only (cookies root or /api/login), riskcode>=1 => FAIL, else completed imported evidence => NO_ALERT. NO_ALERT is operational negative, not proof of safety. Cookie SameSite=None 10054-2 is advice and excluded. CSP 10055 refs 4/5/7/9/10/13 only; 10038 missing/report-only included; other CSP advice excluded. Other selected plugin IDs all positive risk alerts included.",
+  "truth": "Original unchanged ground truth. vulnerable FAIL=TP, PASS/NO_ALERT=FN; safe FAIL=FP, PASS/NO_ALERT=TN. WARNING=ABSTAIN. Unknown excluded, outputs reported. Error excluded and reported.",
+  "metrics": "Primary known cases only. precision TP/(TP+FP), conditional recall TP/(TP+FN), coverage (TP+FP+FN+TN)/known; vulnerable detection TP/all vulnerable also reported. Zero denominator null. Supplemental preference-cookie policy case separate.",
+  "evidence": "Capture HTTPConnection responses actually consumed by WSS; duplicate response fields and base64 body in HAR. Import into ZAP importHar sendRequests=false after fixture closes. Require GET bytes=Content-Length and imported message count=HAR count, queue empty and no running scan. No spider/active scan. No fake HTTPS.",
+  "timing": "WSS run_scan wall time includes HTTP acquisition; ZAP import+queue+running wait wall time excludes acquisition and startup, includes polling overhead. Not a speed ranking. ZAP persistent JVM per batch; per-trial sampled RSS and batch process peak; WSS fresh process including fixture/imports. Single repetition, no inferential significance.",
+  "policy": "none is equal-input primary; headers passes existing P1/header requirements only to WSS, separately reported. ZAP has no equivalent service contract input. Policy supplement excluded from primary.",
+  "sources": [
+    "https://www.zaproxy.org/docs/desktop/addons/import-export/",
+    "https://www.zaproxy.org/docs/api/"
+  ],
+  "local_rule_sources": {
+    "AntiClickjackingScanRule.java": "f044b727da6c901f579cf973114a14f0d096c4e0fadd97587d9d37f79764ac3f",
+    "ContentSecurityPolicyMissingScanRule.java": "0f89ef964687121210d9864573a6e911f40371e700a38869da51ffc8fb56bd3b",
+    "ContentSecurityPolicyScanRule.java": "7acad61667cb21bfd9cf14a44d8898d5af0450e392994d539c3c87178b02dc79",
+    "CookieHttpOnlyScanRule.java": "366215ebf5514730331c3cbd2a5da88bf3b0f5f4a88a5e9567565ce1a74b3801",
+    "CookieSameSiteScanRule.java": "ca6467930dd98769488420d245097b46ff9dc437ba0bf1f291bee54e6946d59d",
+    "CookieSecureFlagScanRule.java": "dc08c9573788faf6b72cb1256a3c73fc27593aaab5d303f89aaedaae6cefdf77",
+    "CrossDomainMisconfigurationScanRule.java": "970f2a59cfa8f9594089b87369d5683c75b3ae54e6b5ce0ba35e86fd585e7756",
+    "StrictTransportSecurityScanRule.java": "8f99c6686f89ecd49b64371ea4f1d45f8626ef20794f7a0d759d520e80ea2ff4",
+    "XContentTypeOptionsScanRule.java": "890aa66880b60581cbd82a393b67ccf2475c25c826acf14d0f17217f982ace62"
+  }
+}

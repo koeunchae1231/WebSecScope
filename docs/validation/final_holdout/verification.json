@@ -1,0 +1,10 @@
+{
+  "raw_trials": 900,
+  "case_denominators_verified": true,
+  "independent_arithmetic_matched": true,
+  "findings_audited": 19827,
+  "policy_bindings_verified": 600,
+  "body_cap_verified": true,
+  "external_connections": 0,
+  "code_and_inputs_unchanged": true
+}

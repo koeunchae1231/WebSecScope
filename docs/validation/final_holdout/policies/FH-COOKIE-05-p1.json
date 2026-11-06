@@ -1,0 +1,13 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [],
+  "cookies": [
+    {
+      "name": "dispatch_density",
+      "purpose": "preference",
+      "javascript_access_required": true,
+      "path": "/"
+    }
+  ]
+}

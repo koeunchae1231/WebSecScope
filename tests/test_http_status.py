@@ -19,7 +19,7 @@ def test_sensitive_path_interpretation_separates_protected_status():
     assert "not a confirmed exposure" in interpretation
 
 
-def test_sensitive_path_200_is_exposed(monkeypatch):
+def test_sensitive_path_200_without_content_requires_review(monkeypatch):
     monkeypatch.setattr(web, "SENSITIVE_PATHS", ["admin"])
     monkeypatch.setattr(
         web,
@@ -34,9 +34,11 @@ def test_sensitive_path_200_is_exposed(monkeypatch):
 
     finding = web._scan_sensitive_paths("https://example.com")[0]
 
-    assert finding.status == FAIL
-    assert finding.risk == RISK_HIGH
-    assert "exposed" in finding.evidence
+    # A successful status without content cannot establish sensitive disclosure.
+    assert finding.status == WARNING
+    assert finding.risk == RISK_LOW
+    assert finding.metadata["paths"][0]["outcome"] == "unconfirmed"
+    assert "lacks a specific sensitive-resource signature" in finding.evidence
 
 
 def test_sensitive_path_403_is_review_not_failure(monkeypatch):

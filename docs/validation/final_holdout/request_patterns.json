@@ -1,0 +1,277 @@
+[
+  {
+    "method": "GET",
+    "path": "/",
+    "count": 918
+  },
+  {
+    "method": "GET",
+    "path": "/.env",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/.git/HEAD",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-1327c0c71c184fe3ba3ac7a26fe4d94f",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-29452ebb2ba54948970c912078a37caf",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-563616b41a9e470b8fdae1ff319f0dd4",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-577490c883d84956a801f177756a21e1",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-5d1c24a27b8d4ef1913249f97275d88c",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-73905f9f27464ae39c781980b23329b2",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-789b218fbb4249da9cc8c8d236e60b82",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-90109515a2eb48a3807f1513b65db066",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-9211e1154127459e8381e68179989bc8",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-adce55b9886d4789ad25b04b84299bda",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-b6091a2b61c9475696d91c4975d0aaaa",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-bbcfcdac90684f22a325eaa41b9a8f88",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-cb2318bc21ae46fca1ddce52ee19adb7",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-e249ee9fd91a4e39a2925b832a3aaa65",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-e3d3e6a47ee94826a7ec51b7216c2ea9",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-ebd35ab30599496da023a2a17fdd316a",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-ee258fed6a114638a2d55e8db3076196",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-api-missing-f758f1d97538419aa5d064c2467ef02c",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-0449a4044aec4f8282b6027ecf5a53f4",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-5072283dae8744de888076de65fb3800",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-acfeeefbd07640ebace2c10ee1ddf9fa",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-b0cb6c32bbf346208b5196e145e727a1",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-b59e0fdd6c52425e9a344faa5d81a8ec",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-c0f26d5d6a5b4dc59f5b1a2296500870",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-cba78677f4e14a99bebf5041e395cbb6",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-cfda6146a42441498718aba38b0ada40",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/.websecscope-not-found-fd2696248a3f434e94cfd769fc22d501",
+    "count": 1
+  },
+  {
+    "method": "GET",
+    "path": "/admin",
+    "count": 1800
+  },
+  {
+    "method": "GET",
+    "path": "/api",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/api-docs",
+    "count": 918
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin",
+    "count": 924
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/api/login",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/api/users",
+    "count": 1020
+  },
+  {
+    "method": "GET",
+    "path": "/backup.zip",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/identity/sign-in",
+    "count": 9
+  },
+  {
+    "method": "GET",
+    "path": "/login",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/openapi.json",
+    "count": 924
+  },
+  {
+    "method": "GET",
+    "path": "/phpinfo.php",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/signin",
+    "count": 900
+  },
+  {
+    "method": "GET",
+    "path": "/swagger",
+    "count": 918
+  },
+  {
+    "method": "HEAD",
+    "path": "/",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/.env",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/.git/HEAD",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/admin",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/api-docs",
+    "count": 18
+  },
+  {
+    "method": "HEAD",
+    "path": "/api/admin",
+    "count": 24
+  },
+  {
+    "method": "HEAD",
+    "path": "/api/users",
+    "count": 12
+  },
+  {
+    "method": "HEAD",
+    "path": "/backup.zip",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/openapi.json",
+    "count": 24
+  },
+  {
+    "method": "HEAD",
+    "path": "/phpinfo.php",
+    "count": 900
+  },
+  {
+    "method": "HEAD",
+    "path": "/swagger",
+    "count": 18
+  }
+]

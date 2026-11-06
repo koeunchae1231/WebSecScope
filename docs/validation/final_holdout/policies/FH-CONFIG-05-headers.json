@@ -1,0 +1,12 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [
+    {
+      "path": "/backup.zip",
+      "visibility": "public"
+    }
+  ],
+  "cookies": [],
+  "header_requirements": []
+}

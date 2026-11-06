@@ -1,0 +1,13 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [],
+  "cookies": [
+    {
+      "name": "dispatch_sid",
+      "purpose": "session",
+      "javascript_access_required": false,
+      "path": "/"
+    }
+  ]
+}

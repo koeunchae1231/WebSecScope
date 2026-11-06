@@ -1,0 +1,101 @@
+﻿id,group,truth,scenario,reason
+FH-HDR-01,primary,vulnerable,Stylesheet gateway omits MIME-sniffing defense,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-02,primary,vulnerable,Retired frame allow-origin directive on payroll page,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-03,excluded,vulnerable,HSTS duration has negative integer after gateway templating,HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP
+FH-HDR-04,excluded,vulnerable,HEAD hardened but document GET disables persistence,HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP
+FH-HDR-05,primary,safe,Asset proxy uses case-insensitive nosniff token,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-06,excluded,safe,HSTS quoted persistence with unknown extension,HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP
+FH-HDR-07,primary,safe,Same-origin framing needed for embedded help panel,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-08,primary,safe,Whitespace normalization at nosniff boundary,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-09,primary,unknown,Method-dependent framing without a deployment contract,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-HDR-10,excluded,unknown,Duplicate conflicting HSTS durations through two proxies,HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP
+FH-CSP-01,primary,vulnerable,Broad script execution combined with object wildcard,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-02,primary,vulnerable,Report-only rollout leaves required enforcing header absent,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-03,primary,vulnerable,Nonce-bound scripts but unrestricted embedded objects,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-04,primary,vulnerable,Split script element restriction leaves inline attributes open,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-05,primary,safe,Two enforcing fields intersect broad and deny policies,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-06,primary,safe,Separate element and attribute restrictions with default denial,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-07,primary,safe,Hash-authorized script with ignored unsafe-inline fallback,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-08,primary,safe,Strict-dynamic nonce policy with closed object scope,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-09,primary,unknown,Tenant wildcard origin requires missing ownership context,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CSP-10,primary,unknown,Sandbox constraints interact with broad script fallback,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-REF-01,excluded,vulnerable,Invoice query URL sent under unsafe-url,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-02,excluded,vulnerable,Fallback list ends with downgrade-only restriction,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-03,excluded,vulnerable,Later unsafe token overrides earlier strict field,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-04,excluded,vulnerable,Missing response policy on mandated privacy endpoint,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-05,excluded,safe,Last recognized fallback ignores future token,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-06,excluded,safe,Same-origin detailed referrers with cross-origin origin only,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-07,excluded,safe,Strict cross-origin policy on redirect landing document,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-08,excluded,safe,Same-origin referrers only for embedded billing widget,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-09,excluded,unknown,Origin-only disclosure without an owner privacy contract,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-REF-10,excluded,unknown,Strict but method-dependent privacy policies,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-01,excluded,vulnerable,Camera self grant on camera-free invoice viewer,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-02,excluded,vulnerable,Microphone delegated to conferencing partner on silent kiosk,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-03,excluded,vulnerable,Camera directive omitted from explicit denial contract,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-04,excluded,vulnerable,Geolocation wildcard combined with camera denial,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-05,excluded,safe,Multi-feature deny list for offline manifest viewer,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-06,excluded,safe,Microphone permitted while camera and location are forbidden,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-07,excluded,safe,Separate header fields carry disjoint feature denials,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-08,excluded,safe,Required camera denial alongside unrelated future feature,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-09,excluded,unknown,Duplicate camera declarations cross proxy trust boundary,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-PERM-10,excluded,unknown,Unsupported wildcard origin expression in allowlist,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-01,excluded,vulnerable,Dotenv multiline secret and service identity exposed,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-02,excluded,vulnerable,Nested connection catalog in an environment JSON resource,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-03,excluded,vulnerable,BOM-prefixed detached repository object reference,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-04,excluded,vulnerable,Diagnostic definition list contains database credential,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-05,excluded,safe,Public ZIP distribution happens to use backup filename,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-06,excluded,safe,Environment tutorial rendered as escaped code,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-07,excluded,safe,Git teaching page discusses a reference without exposing one,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-08,excluded,safe,Retired resource routes return gone without content,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-09,excluded,unknown,Partial-range environment fragment lacks identity context,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CONFIG-10,excluded,unknown,Unavailable environment route with gateway incident JSON,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-01,excluded,vulnerable,Private OpenAPI callback inventory returned anonymously,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-02,excluded,vulnerable,Internal Swagger UI with private caching marker,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-03,excluded,vulnerable,Public API document accidentally carries a deployment credential,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-04,excluded,vulnerable,Public OpenAPI server extension embeds an operational token,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-05,excluded,safe,Public OpenAPI example uses an explicit token placeholder,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-06,excluded,safe,Public UI shells reference documentation bundles,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-07,excluded,safe,Public machine-readable changelog at old docs route,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-08,excluded,safe,Private document authentication challenge returns no content,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-09,excluded,unknown,OpenAPI response ends before the schemas object closes,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-DOCS-10,excluded,unknown,Documentation upstream returns bad gateway,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-COOKIE-01,excluded,vulnerable,Cross-site session omits Secure,HTTPS required by ZAP HSTS/Secure rule; fixture is HTTP
+FH-COOKIE-02,primary,vulnerable,Session cookie lacks the JavaScript isolation flag,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-03,primary,vulnerable,Template emits an invalid SameSite enumeration,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-04,primary,vulnerable,API login adds a weak cookie alongside a hardened web session,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-05,policy_supplement,safe,Script-readable display preference is explicitly nonsensitive,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-06,primary,safe,Expiring strict session preserves Expires comma,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-07,primary,safe,Same-name sessions at two declared paths are both hardened,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-08,primary,safe,Case-insensitive flags on a cross-site session,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-09,primary,unknown,Conflicting SameSite fields on an otherwise hardened cookie,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-COOKIE-10,primary,unknown,Malformed cookie field cannot be assigned a trustworthy purpose,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-CORS-01,excluded,vulnerable,Reflected arbitrary credentialed origins expose private dispatch data,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-02,excluded,vulnerable,Wildcard credentials on a public integration route,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-03,excluded,vulnerable,Reflected credentialed private HTML fragment,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-04,excluded,vulnerable,Anonymous wildcard reading of a private customer record,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-05,excluded,safe,Public carrier catalog allows anonymous wildcard access,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-06,excluded,safe,Single trusted widget origin receives credentialed access,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-07,excluded,safe,Origin reflection on a public noncredentialed badge resource,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-08,excluded,safe,Protected API emits no CORS sharing permission,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-09,excluded,unknown,Literal null allowance without a tested null request context,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-CORS-10,excluded,unknown,Second reflected-origin probe is incomplete,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-01,excluded,vulnerable,Administrative JSON returns a nested deployment secret,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-02,excluded,vulnerable,Administrative HTML private record differs from public shell,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-03,excluded,vulnerable,User API discloses private records without an auth challenge,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-04,excluded,vulnerable,Administrative business-data schema lacks heuristic secret labels,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-05,excluded,safe,Administrative candidates reject anonymous requests,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-06,excluded,safe,User API returns explicit forbidden response,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-07,excluded,safe,Public application shell matches both independent controls,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-08,excluded,safe,Administrative login redirect exposes only public sign-in UI,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-09,excluded,unknown,Masked user route fails before authorization decision,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-AUTH-10,excluded,unknown,Route negotiation rejects an unsupported user API representation,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-01,excluded,vulnerable,UTF-16 credential JSON with a declared charset,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-02,excluded,vulnerable,UTF-8 BOM precedes the only environment assignment,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-03,excluded,vulnerable,Multipart response wraps a private environment part,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-04,excluded,vulnerable,Credential begins after the 16KiB collection boundary,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-05,excluded,safe,Complete public configuration example uses only placeholders,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-06,excluded,safe,JSON string tutorial is mislabeled as text but contains no secret,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-07,excluded,safe,Compressed public environment syntax reference,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-08,primary,safe,HEAD unsupported but GET provides valid nosniff header,Shared response configuration check; unknown truth retained outside confusion matrix.
+FH-BODY-09,excluded,unknown,Connection closes before environment response headers,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules
+FH-BODY-10,excluded,unknown,Document GET stalls after a successful HEAD policy observation,Service policy/active multi-request semantics or resource/body interpretation not equivalent to installed passive rules

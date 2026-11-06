@@ -1,0 +1,5 @@
+{
+  "at": "2026-11-05T11:02:47.051746+00:00",
+  "runner_sha256": "2a031d7e6ef5d5eafc97f6e1e60484511708c2f4e444d219e46bf7a80a0d43ba",
+  "reason": "ZAP core numberOfMessages includes synthetic site-tree ancestor nodes type=0/status=0. Validate imported type=15 records per origin, method/URL/status/body bytes instead. Preserve pilot and original runners. Selection, mappings, truth, metrics unchanged."
+}

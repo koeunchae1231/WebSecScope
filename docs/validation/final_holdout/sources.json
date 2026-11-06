@@ -1,0 +1,10 @@
+{
+  "CSP": "https://www.w3.org/TR/CSP/",
+  "Referrer-Policy": "https://www.w3.org/TR/referrer-policy/",
+  "Permissions-Policy": "https://www.w3.org/TR/permissions-policy/",
+  "CORS and nosniff": "https://fetch.spec.whatwg.org/",
+  "Cookies": "https://www.rfc-editor.org/rfc/rfc6265.html",
+  "X-Frame-Options": "https://www.rfc-editor.org/rfc/rfc7034",
+  "HSTS": "https://www.rfc-editor.org/rfc/rfc6797",
+  "truth_authority": "Protocol interpretation supports bounded configuration claims. Confidentiality, cookie purpose, required headers and allowed feature/URL disclosure are explicit synthetic service-owner facts in cases.json; they are not inferred from scanner outputs. No real secret, browser exploit, external service or NVD lookup is involved."
+}

@@ -1,0 +1,27 @@
+{
+  "unit": "One scenario; repeat 1 supplies accuracy. All 3 repeats supply timing and agreement.",
+  "repeats": 3,
+  "positive": "FAIL",
+  "negative": "PASS",
+  "abstain": "WARNING",
+  "error": "exception or no selected Finding",
+  "selection": "Scenario selector fixes scope before execution; FAIL dominates WARNING dominates PASS. No result is ERROR, never PASS.",
+  "truth": "safe/vulnerable application contract independent of scanner capabilities; unknown has no binary label.",
+  "evaluable": "60 labelled cases regardless of observability. 12 unknown scenarios excluded from binary accuracy, reported separately.",
+  "metrics": "TP/FP/FN/TN exclude WARNING and ERROR; accuracy=(TP+TN)/binary decisions; coverage=binary decisions/60.",
+  "warning_negative": "Convert labelled WARNING to FN if vulnerable, TN if safe; ERROR remains an error excluded from that denominator.",
+  "conservative": "(TP+TN)/60; every WARNING/ERROR is incorrect.",
+  "zero_denominator": null,
+  "observations": "Request deadlines stay at production defaults; no browser, login cookie, TLS, preflight or cross-user exploitation verification.",
+  "requests": "Both logical calls and server HTTP events recorded; mean request cost uses server HTTP events including redirect hops.",
+  "agreement": "Cases with identical selected statuses AND check_id/status sets across all 3 runs /72.",
+  "unknown": "No TP/TN credit. Report PASS/FAIL/WARNING/ERROR counts and unresolved-evidence behaviour separately.",
+  "changes": "No target, fixture, truth, selector or scoring edits after freeze. Harness failures retained; corrections versioned before rerun.",
+  "sources": [
+    "https://www.rfc-editor.org/rfc/rfc6265.html",
+    "https://fetch.spec.whatwg.org/#cors-protocol-and-credentials",
+    "https://www.rfc-editor.org/rfc/rfc6797",
+    "https://www.w3.org/TR/CSP3/"
+  ],
+  "corpus_limit": "Constructed by the same agent that implemented improvements, not a blind external holdout. No pre-freeze scanner trial. Fixed candidate URLs are necessary interface constraints; service contracts and bodies are new."
+}

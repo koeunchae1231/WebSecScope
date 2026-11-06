@@ -1,0 +1,1316 @@
+[
+  {
+    "id": "IE-HEADERS-01",
+    "area": "headers",
+    "name": "X-Content-Type-Options NoSnIfF",
+    "input_conditions": {
+      "root_headers": {
+        "X-Content-Type-Options": "NoSnIfF"
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Case-insensitive nosniff enables MIME protection.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Case-insensitive nosniff enables MIME protection.",
+    "selector": "WEB_HEADER_X_CONTENT_TYPE_OPTIONS"
+  },
+  {
+    "id": "IE-HEADERS-02",
+    "area": "headers",
+    "name": "X-Frame-Options SAMEORIGIN",
+    "input_conditions": {
+      "root_headers": {
+        "X-Frame-Options": "SAMEORIGIN"
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Same-origin embedding is the declared service policy.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Same-origin embedding is the declared service policy.",
+    "selector": "WEB_HEADER_X_FRAME_OPTIONS"
+  },
+  {
+    "id": "IE-HEADERS-03",
+    "area": "headers",
+    "name": "Referrer-Policy no-referrer, strict-origin",
+    "input_conditions": {
+      "root_headers": {
+        "Referrer-Policy": "no-referrer, strict-origin"
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Last recognized referrer policy is strict-origin.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Last recognized referrer policy is strict-origin.",
+    "selector": "WEB_HEADER_REFERRER_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-04",
+    "area": "headers",
+    "name": "Permissions-Policy camera=(self \"https://meet.example\"), payment=()",
+    "input_conditions": {
+      "root_headers": {
+        "Permissions-Policy": "camera=(self \"https://meet.example\"), payment=()"
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Only self and explicit camera origin are permitted.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Only self and explicit camera origin are permitted.",
+    "selector": "WEB_HEADER_PERMISSIONS_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-05",
+    "area": "headers",
+    "name": "Content-Security-Policy script-src 'nonce-QWxwaGFTZXJ2aWNl'; object-src 'none'",
+    "input_conditions": {
+      "root_headers": {
+        "Content-Security-Policy": "script-src 'nonce-QWxwaGFTZXJ2aWNl'; object-src 'none'"
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Nonce-based script allowlist and object denial satisfy declared script policy.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Nonce-based script allowlist and object denial satisfy declared script policy.",
+    "selector": "WEB_HEADER_CONTENT_SECURITY_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-06",
+    "area": "headers",
+    "name": "Content-Security-Policy default-src * data: 'unsafe-inline' 'unsafe-eval'",
+    "input_conditions": {
+      "root_headers": {
+        "Content-Security-Policy": "default-src * data: 'unsafe-inline' 'unsafe-eval'"
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Service requires restrictive script execution; inline and eval plus broad sources violate it.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Service requires restrictive script execution; inline and eval plus broad sources violate it.",
+    "selector": "WEB_HEADER_CONTENT_SECURITY_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-07",
+    "area": "headers",
+    "name": "Referrer-Policy unsafe-url",
+    "input_conditions": {
+      "root_headers": {
+        "Referrer-Policy": "unsafe-url"
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Service URLs contain private query identifiers; full cross-origin referrer disclosure violates privacy policy.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Service URLs contain private query identifiers; full cross-origin referrer disclosure violates privacy policy.",
+    "selector": "WEB_HEADER_REFERRER_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-08",
+    "area": "headers",
+    "name": "Permissions-Policy camera=*",
+    "input_conditions": {
+      "root_headers": {
+        "Permissions-Policy": "camera=*"
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Service requires camera denial; unrestricted camera delegation violates it.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Service requires camera denial; unrestricted camera delegation violates it.",
+    "selector": "WEB_HEADER_PERMISSIONS_POLICY"
+  },
+  {
+    "id": "IE-HEADERS-09",
+    "area": "headers",
+    "name": "Strict-Transport-Security max-age=0",
+    "input_conditions": {
+      "root_headers": {
+        "Strict-Transport-Security": "max-age=0"
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Clearing HSTS violates the deployment requirement for persistent HTTPS enforcement.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Clearing HSTS violates the deployment requirement for persistent HTTPS enforcement.",
+    "selector": "WEB_HEADER_STRICT_TRANSPORT_SECURITY"
+  },
+  {
+    "id": "IE-HEADERS-10",
+    "area": "headers",
+    "name": "X-Frame-Options ALLOW-FROM https://portal.example",
+    "input_conditions": {
+      "root_headers": {
+        "X-Frame-Options": "ALLOW-FROM https://portal.example"
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Obsolete directive does not implement required modern frame restriction.",
+    "observability": "configuration only; no browser or TLS enforcement test",
+    "evaluable": true,
+    "requirement": "Obsolete directive does not implement required modern frame restriction.",
+    "selector": "WEB_HEADER_X_FRAME_OPTIONS"
+  },
+  {
+    "id": "IE-HEADERS-11",
+    "area": "headers",
+    "name": "Different valid frame policies",
+    "input_conditions": {
+      "root_headers": {
+        "X-Frame-Options": "DENY"
+      },
+      "get_headers": {
+        "X-Frame-Options": "SAMEORIGIN"
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Embedding requirements are unspecified; two valid method policies differ.",
+    "observability": "ambiguous policy",
+    "evaluable": false,
+    "requirement": "Embedding requirements are unspecified; two valid method policies differ.",
+    "selector": "WEB_HEADER_X_FRAME_OPTIONS"
+  },
+  {
+    "id": "IE-HEADERS-12",
+    "area": "headers",
+    "name": "Unreadable GET policy",
+    "input_conditions": {
+      "get_delay": 1.12
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "HEAD configuration cannot establish the timed-out document policy.",
+    "observability": "GET unavailable",
+    "evaluable": false,
+    "requirement": "HEAD configuration cannot establish the timed-out document policy.",
+    "selector": "WEB_HEADER_CONTENT_SECURITY_POLICY"
+  },
+  {
+    "id": "IE-COOKIES-01",
+    "area": "cookies",
+    "name": "Account session",
+    "input_conditions": {
+      "cookies": "acct=A7; Path=/; SameSite=Lax; HttpOnly; Secure"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Session requires all three protections.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Session requires all three protections.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-02",
+    "area": "cookies",
+    "name": "Expiry and case",
+    "input_conditions": {
+      "cookies": "acct=B8; Expires=Wed, 09 Jun 2032 10:18:14 GMT; sEcUrE; hTtPoNlY; sAmEsItE=Strict"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Expiry comma is not a cookie separator; attribute names ignore case.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Expiry comma is not a cookie separator; attribute names ignore case.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-03",
+    "area": "cookies",
+    "name": "Cross-site session",
+    "input_conditions": {
+      "cookies": "embed=C9; SameSite=None; HttpOnly; Secure"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Embedded authenticated widget explicitly requires cross-site use with Secure.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Embedded authenticated widget explicitly requires cross-site use with Secure.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-04",
+    "area": "cookies",
+    "name": "Two sessions",
+    "input_conditions": {
+      "cookies": [
+        "acct=D1; HttpOnly; Secure; SameSite=Lax",
+        "refresh=E2; Path=/renew; Secure; SameSite=Strict; HttpOnly"
+      ]
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Both authentication cookies have required protections.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Both authentication cookies have required protections.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-05",
+    "area": "cookies",
+    "name": "Client preference",
+    "input_conditions": {
+      "cookies": "palette=sepia; SameSite=Lax; Secure"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Non-sensitive preference must be read by client JavaScript; HttpOnly is intentionally absent.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Non-sensitive preference must be read by client JavaScript; HttpOnly is intentionally absent.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-06",
+    "area": "cookies",
+    "name": "Cleartext session",
+    "input_conditions": {
+      "cookies": "acct=F3; HttpOnly; SameSite=Strict"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Authentication session lacks Secure.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Authentication session lacks Secure.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-07",
+    "area": "cookies",
+    "name": "Script-readable session",
+    "input_conditions": {
+      "cookies": "acct=G4; Secure; SameSite=Lax"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Authentication session must not be readable by JavaScript.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Authentication session must not be readable by JavaScript.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-08",
+    "area": "cookies",
+    "name": "Unrecognized same-site",
+    "input_conditions": {
+      "cookies": "acct=H5; Secure; HttpOnly; SameSite=CrossOrigin"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Authentication cookie requires a recognized SameSite policy.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Authentication cookie requires a recognized SameSite policy.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-09",
+    "area": "cookies",
+    "name": "Weak cookie among two",
+    "input_conditions": {
+      "cookies": [
+        "acct=I6; Secure; HttpOnly; SameSite=Strict",
+        "refresh=J7; Secure; SameSite=Lax"
+      ]
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Refresh credential lacks HttpOnly.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "Refresh credential lacks HttpOnly.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-10",
+    "area": "cookies",
+    "name": "Unprotected cross-site",
+    "input_conditions": {
+      "cookies": "acct=K8; HttpOnly; SameSite=None"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "SameSite=None requires Secure and credential transport protection.",
+    "observability": "attributes visible; browser storage untested",
+    "evaluable": true,
+    "requirement": "SameSite=None requires Secure and credential transport protection.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-11",
+    "area": "cookies",
+    "name": "Conflicting same-site attributes",
+    "input_conditions": {
+      "cookies": "acct=L9; Secure; HttpOnly; SameSite=None; SameSite=Strict"
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Deployment policy does not specify intended duplicate SameSite resolution.",
+    "observability": "conflicting policy",
+    "evaluable": false,
+    "requirement": "Deployment policy does not specify intended duplicate SameSite resolution.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-COOKIES-12",
+    "area": "cookies",
+    "name": "Malformed quoted session",
+    "input_conditions": {
+      "cookies": "acct=\"unfinished; Secure; HttpOnly; SameSite=Lax"
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Unterminated cookie value cannot establish intended server policy.",
+    "observability": "malformed response",
+    "evaluable": false,
+    "requirement": "Unterminated cookie value cannot establish intended server policy.",
+    "selector": "WEB_COOKIE_FLAGS"
+  },
+  {
+    "id": "IE-PATHS-01",
+    "area": "paths",
+    "name": "Absent archive",
+    "input_conditions": {
+      "routes": {
+        "/backup.zip": {
+          "body": "Archive retired",
+          "status": 410,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Removed archive returns 410.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Removed archive returns 410.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-02",
+    "area": "paths",
+    "name": "Protected environment",
+    "input_conditions": {
+      "routes": {
+        "/.env": {
+          "body": "Bearer credential required",
+          "status": 401,
+          "headers": {
+            "WWW-Authenticate": "Bearer realm=\"settings\""
+          }
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Configuration is inaccessible without authentication.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Configuration is inaccessible without authentication.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-03",
+    "area": "paths",
+    "name": "Denied repository",
+    "input_conditions": {
+      "routes": {
+        "/.git/HEAD": {
+          "body": "Policy prohibits repository browsing",
+          "status": 403,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Repository content is denied.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Repository content is denied.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-04",
+    "area": "paths",
+    "name": "Public admin help",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "<html><h1>Administrator help</h1><p>Public onboarding guide.</p></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Public help document contains no administrator data.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Public help document contains no administrator data.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-05",
+    "area": "paths",
+    "name": "Uniform JSON absence",
+    "input_conditions": {
+      "fallback": {
+        "body": "{\"error\":{\"code\":\"ROUTE_UNKNOWN\",\"retryable\":false}}",
+        "status": 404,
+        "headers": {}
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Unknown resources return explicit JSON 404.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Unknown resources return explicit JSON 404.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-06",
+    "area": "paths",
+    "name": "Environment assignment",
+    "input_conditions": {
+      "routes": {
+        "/.env": {
+          "body": "SMTP_PASSWORD=\"mail-credential\"\nBILLING_KEY=\"k_live_local\"\n",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Unauthenticated configuration response exposes application credentials.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Unauthenticated configuration response exposes application credentials.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-07",
+    "area": "paths",
+    "name": "JSON secret configuration",
+    "input_conditions": {
+      "routes": {
+        "/.env": {
+          "body": "{\"database\":{\"username\":\"billing\",\"password\":\"local-only-secret\"}}",
+          "status": 200,
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "JSON-formatted configuration exposes database credential.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "JSON-formatted configuration exposes database credential.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-08",
+    "area": "paths",
+    "name": "Repository detached commit",
+    "input_conditions": {
+      "routes": {
+        "/.git/HEAD": {
+          "body": "8a38d54ea318fbf54f78ed6e78bf432fd56798aa\n",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Repository HEAD discloses a detached private revision under deny-all repository policy.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Repository HEAD discloses a detached private revision under deny-all repository policy.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-09",
+    "area": "paths",
+    "name": "Archive bytes",
+    "input_conditions": {
+      "routes": {
+        "/backup.zip": {
+          "body": "PK\u0003\u0004INTERNAL_PAYROLL_EXPORT",
+          "status": 200,
+          "headers": {
+            "Content-Type": "application/zip"
+          }
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private payroll archive is served without authentication.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Private payroll archive is served without authentication.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-10",
+    "area": "paths",
+    "name": "Server runtime diagnostics",
+    "input_conditions": {
+      "routes": {
+        "/phpinfo.php": {
+          "body": "<html><title>PHP 8.3 diagnostics</title><table><tr><td>DB_PASSWORD</td><td>local-secret</td></tr></table></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Runtime diagnostics disclose a database password.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Runtime diagnostics disclose a database password.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-11",
+    "area": "paths",
+    "name": "Gateway body",
+    "input_conditions": {
+      "routes": {
+        "/.env": {
+          "body": "upstream temporarily unavailable",
+          "status": 502,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Upstream returned an error; resource access policy is unknown.",
+    "observability": "origin unavailable",
+    "evaluable": false,
+    "requirement": "Upstream returned an error; resource access policy is unknown.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-PATHS-12",
+    "area": "paths",
+    "name": "Login redirect policy",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "",
+          "status": 307,
+          "headers": {
+            "Location": "/login"
+          }
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Redirect alone does not show the protected resource or post-login authorization.",
+    "observability": "redirect only",
+    "evaluable": false,
+    "requirement": "Redirect alone does not show the protected resource or post-login authorization.",
+    "selector": "WEB_SENSITIVE_PATHS"
+  },
+  {
+    "id": "IE-ADMIN-01",
+    "area": "admin",
+    "name": "Static shell",
+    "input_conditions": {
+      "fallback": {
+        "body": "<html><body><div id=\"app\"></div><script src=\"/static/runtime.js\"></script></body></html>",
+        "status": 200,
+        "headers": {}
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Every route returns a public bootstrap document, without private data.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Every route returns a public bootstrap document, without private data.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-02",
+    "area": "admin",
+    "name": "Dynamic shell",
+    "input_conditions": {
+      "dynamic_shell": true
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Per-request nonce changes public bootstrap HTML; it still contains no private data.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Per-request nonce changes public bootstrap HTML; it still contains no private data.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-03",
+    "area": "admin",
+    "name": "Login challenge",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "{\"error\":\"authentication_required\"}",
+          "status": 401,
+          "headers": {
+            "WWW-Authenticate": "Basic realm=\"operations\""
+          }
+        },
+        "/api/admin": {
+          "body": "{\"error\":\"authentication_required\"}",
+          "status": 401,
+          "headers": {
+            "WWW-Authenticate": "Basic realm=\"operations\""
+          }
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Administrator access requires authentication.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Administrator access requires authentication.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-04",
+    "area": "admin",
+    "name": "ACL refusal",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "<html>Role required: operator</html>",
+          "status": 403,
+          "headers": {}
+        },
+        "/api/admin": {
+          "body": "<html>Role required: operator</html>",
+          "status": 403,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Unauthenticated access is denied by ACL.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Unauthenticated access is denied by ACL.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-05",
+    "area": "admin",
+    "name": "Public catalog example",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "{\"examples\":[{\"secret\":\"replace-this-placeholder\"}],\"notice\":\"public integration examples\"}",
+          "status": 200,
+          "headers": {
+            "Cache-Control": "public"
+          }
+        },
+        "/api/admin": {
+          "body": "{\"examples\":[{\"secret\":\"replace-this-placeholder\"}],\"notice\":\"public integration examples\"}",
+          "status": 200,
+          "headers": {
+            "Cache-Control": "public"
+          }
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Public documentation uses a secret-named example field; it contains no credential.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Public documentation uses a secret-named example field; it contains no credential.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-06",
+    "area": "admin",
+    "name": "Nested confidential rows",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "{\"result\":{\"confidential\":[{\"employee\":\"A\",\"salary\":74000}]}}",
+          "status": 200,
+          "headers": {}
+        },
+        "/api/admin": {
+          "body": "{\"result\":{\"confidential\":[{\"employee\":\"A\",\"salary\":74000}]}}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private employee salary data is returned without authentication.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Private employee salary data is returned without authentication.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-07",
+    "area": "admin",
+    "name": "Unlabelled salary table",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "<html><h1>Payroll console</h1><table><tr><td>Employee 83</td><td>Salary 74000</td></tr></table></html>",
+          "status": 200,
+          "headers": {}
+        },
+        "/api/admin": {
+          "body": "<html><h1>Payroll console</h1><table><tr><td>Employee 83</td><td>Salary 74000</td></tr></table></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private payroll HTML is returned without authentication.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Private payroll HTML is returned without authentication.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-08",
+    "area": "admin",
+    "name": "Ordinary JSON fields",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "{\"items\":[{\"employee_id\":83,\"annual_pay\":74000}],\"total\":1}",
+          "status": 200,
+          "headers": {}
+        },
+        "/api/admin": {
+          "body": "{\"items\":[{\"employee_id\":83,\"annual_pay\":74000}],\"total\":1}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private salary records use ordinary domain field names.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Private salary records use ordinary domain field names.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-09",
+    "area": "admin",
+    "name": "Private cached report",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "{\"report\":{\"balance\":4800,\"account\":\"regional\"}}",
+          "status": 200,
+          "headers": {
+            "Cache-Control": "private, no-store"
+          }
+        },
+        "/api/admin": {
+          "body": "{\"report\":{\"balance\":4800,\"account\":\"regional\"}}",
+          "status": 200,
+          "headers": {
+            "Cache-Control": "private, no-store"
+          }
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Application contract marks this account report private; no login is enforced.",
+    "observability": "direct",
+    "evaluable": true,
+    "requirement": "Application contract marks this account report private; no login is enforced.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-10",
+    "area": "admin",
+    "name": "Large public prefix",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "<html><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><p>Private employee salary: 74000</p></html>",
+          "status": 200,
+          "headers": {}
+        },
+        "/api/admin": {
+          "body": "<html><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><!-- layout padding --><p>Private employee salary: 74000</p></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private data appears beyond the first 4096 bytes.",
+    "observability": "beyond sample boundary",
+    "evaluable": true,
+    "requirement": "Private data appears beyond the first 4096 bytes.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-11",
+    "area": "admin",
+    "name": "Unclassified console",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "<html><h1>Operations console</h1><p>Loading...</p></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "A console page title alone cannot establish whether any private data was returned.",
+    "observability": "insufficient content",
+    "evaluable": false,
+    "requirement": "A console page title alone cannot establish whether any private data was returned.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-ADMIN-12",
+    "area": "admin",
+    "name": "Redirect to identity provider",
+    "input_conditions": {
+      "routes": {
+        "/admin": {
+          "body": "",
+          "status": 302,
+          "headers": {
+            "Location": "/login"
+          }
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Only local login redirect is observed; authorization after login is unknown.",
+    "observability": "redirect only",
+    "evaluable": false,
+    "requirement": "Only local login redirect is observed; authorization after login is unknown.",
+    "selector": "admin"
+  },
+  {
+    "id": "IE-CORS-01",
+    "area": "cors",
+    "name": "Public weather",
+    "input_conditions": {
+      "cors_mode": "wild-public"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Public weather observations permit anonymous cross-origin reads.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Public weather observations permit anonymous cross-origin reads.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-02",
+    "area": "cors",
+    "name": "Fixed partner",
+    "input_conditions": {
+      "cors_mode": "allowlist"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Only the contracted partner origin receives CORS permission.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Only the contracted partner origin receives CORS permission.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-03",
+    "area": "cors",
+    "name": "Public echo",
+    "input_conditions": {
+      "cors_mode": "reflect-public"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Echoed origins without credentials are permitted for this public dataset.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Echoed origins without credentials are permitted for this public dataset.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-04",
+    "area": "cors",
+    "name": "Same-origin private",
+    "input_conditions": {
+      "cors_mode": "no-cors"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "CORS headers are absent; cross-origin reading is not enabled.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "CORS headers are absent; cross-origin reading is not enabled.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-05",
+    "area": "cors",
+    "name": "Documented public without cache flag",
+    "input_conditions": {
+      "cors_mode": "wild-neutral"
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Public catalog contract permits wildcard even without cache declaration.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Public catalog contract permits wildcard even without cache declaration.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-06",
+    "area": "cors",
+    "name": "Invalid credential wildcard",
+    "input_conditions": {
+      "cors_mode": "wild-credential"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Deployment requires a valid credentialed partner policy; wildcard+credentials violates configuration requirements. Browser reading is blocked.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Deployment requires a valid credentialed partner policy; wildcard+credentials violates configuration requirements. Browser reading is blocked.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-07",
+    "area": "cors",
+    "name": "Private reflection marked",
+    "input_conditions": {
+      "cors_mode": "reflect-private"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private financial data is shared with arbitrary origins and credentials permission.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Private financial data is shared with arbitrary origins and credentials permission.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-08",
+    "area": "cors",
+    "name": "Private reflection ordinary fields",
+    "input_conditions": {
+      "cors_mode": "reflect-neutral"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Application contract marks account ledger private despite neutral JSON field names.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Application contract marks account ledger private despite neutral JSON field names.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-09",
+    "area": "cors",
+    "name": "Private reflection with field evidence",
+    "input_conditions": {
+      "cors_mode": "reflect-secret"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Credential fields and arbitrary credentialed Origin reflection are combined.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Credential fields and arbitrary credentialed Origin reflection are combined.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-10",
+    "area": "cors",
+    "name": "Null origin private",
+    "input_conditions": {
+      "cors_mode": "null-private"
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private data grants credentials to opaque null origins contrary to partner-only policy.",
+    "observability": "headers/content; no credentialed browser execution",
+    "evaluable": true,
+    "requirement": "Private data grants credentials to opaque null origins contrary to partner-only policy.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-11",
+    "area": "cors",
+    "name": "Unspecified data ownership",
+    "input_conditions": {
+      "cors_mode": "reflect-neutral"
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Reflected credentialed JSON has no known ownership/access policy.",
+    "observability": "ownership unknown",
+    "evaluable": false,
+    "requirement": "Reflected credentialed JSON has no known ownership/access policy.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-CORS-12",
+    "area": "cors",
+    "name": "Origin request timeout",
+    "input_conditions": {
+      "cors_mode": "probe-timeout"
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Primary response succeeds but origin-specific requests time out.",
+    "observability": "probes unavailable",
+    "evaluable": false,
+    "requirement": "Primary response succeeds but origin-specific requests time out.",
+    "selector": "cors"
+  },
+  {
+    "id": "IE-AUTH-01",
+    "area": "auth",
+    "name": "Bearer challenge",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"problem\":{\"status\":401}}",
+          "status": 401,
+          "headers": {
+            "WWW-Authenticate": "Bearer realm=\"ledger\""
+          }
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Unauthenticated request is rejected.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Unauthenticated request is rejected.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-02",
+    "area": "auth",
+    "name": "Forbidden operations",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"code\":\"ACCESS_DENIED\"}",
+          "status": 403,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Role check rejects anonymous access.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Role check rejects anonymous access.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-03",
+    "area": "auth",
+    "name": "Public health endpoint",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"service\":\"catalog\",\"health\":\"green\"}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Health status is intentionally public and requires no authentication.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Health status is intentionally public and requires no authentication.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-04",
+    "area": "auth",
+    "name": "Public version endpoint",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"release\":\"2026.11\",\"region\":\"eu\"}",
+          "status": 200,
+          "headers": {
+            "Cache-Control": "public"
+          }
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Public release metadata does not require authentication.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Public release metadata does not require authentication.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-05",
+    "area": "auth",
+    "name": "Authentication concealed by 404",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"message\":\"not available\"}",
+          "status": 404,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "safe",
+    "ground_truth_reason": "Deployment deliberately conceals protected resources from unauthenticated callers.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Deployment deliberately conceals protected resources from unauthenticated callers.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-06",
+    "area": "auth",
+    "name": "Unauthenticated profile",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"profile\":{\"email\":\"operator@example.invalid\",\"phone\":\"555-0100\"}}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Account profile contract requires authentication; records are public.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Account profile contract requires authentication; records are public.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-07",
+    "area": "auth",
+    "name": "Nested access token",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"payload\":{\"token\":\"local-evaluation-token\"}}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Authentication credential is returned anonymously.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Authentication credential is returned anonymously.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-08",
+    "area": "auth",
+    "name": "Unprotected transactions",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"transactions\":[{\"amount\":820,\"currency\":\"EUR\"}]}",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Ledger endpoint requires account authentication.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Ledger endpoint requires account authentication.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-09",
+    "area": "auth",
+    "name": "HTML customer report",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "<html><article>Customer invoice 382: EUR 820</article></html>",
+          "status": 200,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Private invoice is available to unauthenticated callers.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Private invoice is available to unauthenticated callers.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-10",
+    "area": "auth",
+    "name": "Session attribute defect",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"signed_in\":true}",
+          "status": 200,
+          "headers": {
+            "Set-Cookie": "identity=M2; SameSite=None; HttpOnly"
+          }
+        }
+      }
+    },
+    "security_state": "vulnerable",
+    "ground_truth_reason": "Credential cookie is missing Secure.",
+    "observability": "unauthenticated response only",
+    "evaluable": true,
+    "requirement": "Credential cookie is missing Secure.",
+    "selector": "AUTH_COOKIE_ATTRIBUTES"
+  },
+  {
+    "id": "IE-AUTH-11",
+    "area": "auth",
+    "name": "Upstream unavailable",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "{\"error\":\"dependency unavailable\"}",
+          "status": 503,
+          "headers": {}
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Gateway failure prevents authentication assessment.",
+    "observability": "origin unavailable",
+    "evaluable": false,
+    "requirement": "Gateway failure prevents authentication assessment.",
+    "selector": "auth_access"
+  },
+  {
+    "id": "IE-AUTH-12",
+    "area": "auth",
+    "name": "Transport stalls",
+    "input_conditions": {
+      "routes": {
+        "/api/users": {
+          "body": "",
+          "status": 200,
+          "headers": {},
+          "delay": 1.12
+        }
+      }
+    },
+    "security_state": "unknown",
+    "ground_truth_reason": "Request deadline prevents authentication assessment.",
+    "observability": "request timeout",
+    "evaluable": false,
+    "requirement": "Request deadline prevents authentication assessment.",
+    "selector": "auth_access"
+  }
+]

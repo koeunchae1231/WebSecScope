@@ -1,0 +1,1 @@
+{"runner_sha256": "805d24a712215f78254bdadbce457d913da4e530923c9ddb09511c85b31fcccb", "reason": "First trial aborted before any result/HAR was saved: read_body uses HTTPResponse.read1. Capture read1 as well. Case selection, mappings, truth and metrics unchanged. Original runner preserved."}

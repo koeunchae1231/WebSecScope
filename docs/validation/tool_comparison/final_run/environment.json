@@ -1,0 +1,34 @@
+{
+  "at": "2026-11-05T11:00:59.925412+00:00",
+  "pid": 9704,
+  "port": 50469,
+  "command": [
+    "LOCAL_PATH_REDACTED Files/Java/jdk-24/bin/java.exe",
+    "-Xmx768m",
+    "-Djava.awt.headless=true",
+    "-jar",
+    "LOCAL_PATH_REDACTED",
+    "-daemon",
+    "-silent",
+    "-dir",
+    "LOCAL_PATH_REDACTED",
+    "-host",
+    "127.0.0.1",
+    "-port",
+    "50469",
+    "-config",
+    "api.disablekey=true",
+    "-config",
+    "api.addrs.addr.name=127.0.0.1",
+    "-config",
+    "api.addrs.addr.regex=false",
+    "-config",
+    "connection.timeoutInSecs=1"
+  ],
+  "version": {
+    "version": "2.17.0"
+  },
+  "startup_seconds": 13.869404099999883,
+  "python": "3.13.14 (tags/v3.13.14:fd17997, Jun 10 2026, 13:03:48) [MSC v.1944 64 bit (AMD64)]",
+  "archive_sha256": "94c8f767b1c2e94f0db66b3ae56514d5e3f5a728ee1b6c798e0c8fe2d61fbff0"
+}

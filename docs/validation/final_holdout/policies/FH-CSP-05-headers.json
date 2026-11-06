@@ -1,0 +1,17 @@
+{
+  "policy_version": 1,
+  "target_origin": "$LOOPBACK_ORIGIN",
+  "resources": [],
+  "cookies": [],
+  "header_requirements": [
+    {
+      "path": "/",
+      "required_headers": [
+        "Content-Security-Policy"
+      ],
+      "strength": {
+        "Content-Security-Policy": "p2-restricted-script-object"
+      }
+    }
+  ]
+}
