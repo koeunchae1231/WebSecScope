@@ -1,24 +1,26 @@
 __pycache__/
-**/__pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
-
+.pytest-local/
 .venv/
+.venv-final/
 venv/
 env/
-
+.cleanup-runtime/
+.publication-prep/
+.tool-comparison-runtime/
+.websecscope_cache/
 .env
-ollama
+.env.*
+!.env.example
 ollama/
 
-.websecscope_cache/
-
-reports/*.json
-reports/*.html
+# Generated CLI reports and development baseline output.
+reports/*
 !reports/.gitkeep
+docs/validation/results/
 
 .idea/
 .vscode/
-
 .DS_Store
 Thumbs.db
